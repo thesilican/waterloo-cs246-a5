@@ -4,18 +4,31 @@ class Move;
 class Game;
 
 class Bot {
-    Game& game;
 public:
-    virtual Move best_move(Game &game);
+    virtual Move best_move(Game &game) = 0;
 };
 
+// Bot Level 1
 // Makes random moves
-class ColossalIdiotBot : public Bot {};
+class BumblingBuffoonBot : public Bot {
+    Move best_move(Game &game) override;
+};
 
-class SlightlyCompetentBot : public Bot {};
+// Bot Level 2
+// Prefers capturing and checks over other moves
+class SlightlyCompetentBot : public Bot {
+    Move best_move(Game &game) override;
+};
 
-class AverageCsStudentBot : public Bot {};
+// Bot Level 3
+// Prefers avoiding capture, capturing moves, and checks
+class AverageCsStudentBot : public Bot {
+    Move best_move(Game &game) override;
+};
 
-class ChuckNorrisBot : public Bot {};
+// Bot Level 4
+class ChuckNorrisBot : public Bot {
+    Move best_move(Game &game) override;
+};
 
 #endif

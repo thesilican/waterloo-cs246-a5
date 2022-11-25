@@ -1,0 +1,133 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty fields
+hide empty methods
+
+class Point {
+x: int
+y: int
+}
+
+class Move {
+piece: PieceType
+from: Point
+to: Point
+}
+
+enum Player {
+White
+Black
+}
+
+enum PieceType {
+Pawn
+Knight
+Bishop
+Rook
+Queen
+King
+}
+
+abstract class Piece {
++ player: Player
++ {abstract} possible_moves(): vector<Move>
++ {abstract} piece_type(): PieceType
++ {abstract} clone(): unique_ptr<Piece>
+}
+
+class Pawn {
++ player: Player
++ possible_moves(): vector<Move>
++ piece_type(): PieceType
++ clone(): unique_ptr<Piece>
+}
+
+class Knight {
++ player: Player
++ possible_moves(): vector<Move>
++ piece_type(): PieceType
++ clone(): unique_ptr<Piece>
+}
+
+class Bishop {
++ player: Player
++ possible_moves(): vector<Move>
++ piece_type(): PieceType
++ clone(): unique_ptr<Piece>
+}
+
+class Rook {
++ player: Player
++ possible_moves(): vector<Move>
++ piece_type(): PieceType
++ clone(): unique_ptr<Piece>
+}
+
+class Queen {
++ player: Player
++ possible_moves(): vector<Move>
++ piece_type(): PieceType
++ clone(): unique_ptr<Piece>
+}
+
+class King {
++ player: Player
++ possible_moves(): vector<Move>
++ piece_type(): PieceType
++ clone(): unique_ptr<Piece>
+}
+
+Pawn -u-|> Piece
+Knight -u-|> Piece
+Bishop -u-|> Piece
+Rook -u-|> Piece
+Queen -u-|> Piece
+King -u-|> Piece
+
+Pawn *-d-> Player
+Knight *-d-> Player
+Bishop *-d-> Player
+Rook *-d-> Player
+Queen *-d-> Player
+King *-d-> Player
+
+class Board {
++ pieces: unique_ptr<Piece>[8][8]
++ en_passent_square: Point
++ can_castle: bool[4]
+}
+Board *-d-> Piece
+Board *-d-> Point
+
+class Game {
+}
+Game *-d-> Board
+Game *-d-> Player
+
+
+abstract class Bot {
++ best_move(Game &game): Move
+}
+
+class BumblingBuffoonBot {
++ best_move(Game &game): Move
+}
+class SlightlyCompetentBot {
++ best_move(Game &game): Move
+}
+class AverageCsStudentBot {
++ best_move(Game &game): Move
+}
+class ChuckNorrisBot {
++ best_move(Game &game): Move
+}
+BumblingBuffoonBot -u-|> Bot
+SlightlyCompetentBot -u-|> Bot
+AverageCsStudentBot -u-|> Bot
+ChuckNorrisBot -u-|> Bot
+
+class Observer {
+
+}
+
+@enduml

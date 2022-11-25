@@ -1,5 +1,9 @@
 CXX := g++
+ifeq ($(uname), Darwin)
+CXXFLAGS := -std=c++14 -Wall -I /opt/homebrew/include -L /opt/homebrew/lib
+else
 CXXFLAGS := -std=c++14 -Wall
+endif
 
 BIN_PATH := bin
 OBJ_PATH := obj

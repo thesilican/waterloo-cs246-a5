@@ -3,20 +3,29 @@
 #include <array>
 #include <iostream>
 #include <memory>
+#include <optional>
+#include "point.h"
+#include "piece.h"
+#include "move.h"
 class Point;
 class Piece;
 class Move;
 
 class Board {
-    // nullptr indicates an empty square
-    std::unique_ptr<Piece> pieces[8][8];
 
   public:
-    std::unique_ptr<Piece> get(Point p);
-    void set(Point p, std::unique_ptr<Piece> piece);
+    Player to_move;
+    std::unique_ptr<Piece> pieces[8][8];
+    Point en_passent_square;
+    bool can_castle[4];
+
+    void set(Point p, PieceType piece, Player player);
     std::vector<Move> legal_moves();
+    bool in_check();
+    bool is_checkmate();
     void make_move(Move m);
-    void undo_move(Move m);
+    Board clone();
+    Board(std::unique_ptr<Piece> pieces[8][8], Point en_passent_square, bool can_castle[4]);
 };
 
 #endif

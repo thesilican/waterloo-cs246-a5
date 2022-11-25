@@ -1,17 +1,20 @@
 #ifndef SETUP_H
 #define SETUP_H
+#include "board.h"
 class Move;
 class Board;
+class Point;
+class Piece;
 enum class Player;
 
-class SetUp {
-public:
+class Setup {
     Board board;
-    Player to_move;
     void add_piece(Point point, Piece* piece);
     void remove_piece(Point point);
-    void run_setup();
-    void perform_command(string command);
-}
+    public:
+    Player to_move;
+    void run_setup(); //text command loop
+    void perform_command(std::string command);
+};
 
 #endif
