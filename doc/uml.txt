@@ -3,21 +3,122 @@ skinparam classAttributeIconSize 0
 hide empty fields
 hide empty methods
 
-class Point {
-x: int
-y: int
+abstract class Bot {
++ {abstract} best_move(Game &game): Move;
 }
 
-class Move {
-piece: PieceType
-from: Point
-to: Point
+class BumblingBuffoonBot {
++ best_move(Game &game): Move;
 }
+BumblingBuffoonBot <|-u- Bot
+
+class SlightlyCompetentBot {
++ best_move(Game &game): Move;
+}
+SlightlyCompetentBot <|-u- Bot
+
+class AverageCsStudentBot {
++ best_move(Game &game): Move;
+}
+AverageCsStudentBot <|-u- Bot
+
+class ChuckNorrisBot {
++ best_move(Game &game): Move;
+}
+ChuckNorrisBot <|-u- Bot
+
+
+class Board {
++ to_move: Player
++ pieces: unique_ptr<Piece> pieces[8][8]
++ en_passent_square: Point
++ can_castle: bool[4]
++ set(Point p, PieceType piece, Player player): void
++ legal_moves(): vector<Move>
++ in_check(): bool
++ is_checkmate(): bool
++ make_move(Move m): void
++ clone(): Board
+}
+Board "1" *--> "1" Player
+Board "1" *--> "64" Piece
+Board "1" *--> "1" Point
+
+enum ControllerState {
+Setup
+InProgress
+WhiteWin
+BlackWin
+Draw
+Finished
+}
+
+class Controller {
++setup: Setup
++game: Game
++state: ControllerState
++white_wins: int
++black_wins: int
++draws: int
++command_loop(): void
+-setup(): void
+-run_game(): void
+-do_game_command(string command): void
+}
+Controller -u-|> Subject
+Controller "1" *--> "1" Setup
+Controller "1" *--> "1" Game
+Controller "1" *--> "1" ControllerState
 
 enum Player {
 White
 Black
 }
+
+class Game {
++board: Board
+-move_history: vector<Board>
++make_move(Move m): void
++undo_move(Move m): void
+}
+Game "1" *--> "1.." Board
+
+class Move {
++piece: PieceType
+-from: Point
+-to: Point
+}
+Move "1" *--> "1" PieceType
+
+abstract class Observer {
+-subject: Subject &
++{abstract} notify(Controller &controller): void
+}
+
+class TextUi {
+-subject: Subject
++notify(Controller &controller): void
+}
+TextUi -u-|> Observer
+TextUi "1" o--> "1" Subject
+
+class GraphicsUi {
+-window: Xwindow
+-subject: Subject
++notify(Controller &controller): void
+}
+GraphicsUi -u-|> Observer
+GraphicsUi "1" o--> "1" Subject
+GraphicsUi "1" *--> "1" Xwindow
+
+class Subject {
+-games: vector<Observer *>
++attach(Observer *o): void
++dettach(Observer *o): void
++notify_observers(Controller &controller): void
+}
+
+Subject "1" o--> "0.." Observer
 
 enum PieceType {
 Pawn
@@ -29,105 +130,111 @@ King
 }
 
 abstract class Piece {
-+ player: Player
-+ {abstract} possible_moves(): vector<Move>
-+ {abstract} piece_type(): PieceType
-+ {abstract} clone(): unique_ptr<Piece>
++player: Player
++{abstract} possible_moves(Board &board, Point from): vector<Move>
++{abstract} piece_type(): PieceType
++{abstract} clone(): unique_ptr<Piece>
 }
 
 class Pawn {
-+ player: Player
-+ possible_moves(): vector<Move>
-+ piece_type(): PieceType
-+ clone(): unique_ptr<Piece>
++player: Player
++possible_moves(Board &board, Point from): vector<Move>
++piece_type(): PieceType
++clone(): unique_ptr<Piece>
 }
+Pawn -u-|> Piece
+Pawn "1" *--> "1" Player
 
 class Knight {
-+ player: Player
-+ possible_moves(): vector<Move>
-+ piece_type(): PieceType
-+ clone(): unique_ptr<Piece>
++player: Player
++possible_moves(Board &board, Point from): vector<Move>
++piece_type(): PieceType
++clone(): unique_ptr<Piece>
 }
+Knight -u-|> Piece
+Knight "1" *--> "1"Player
 
 class Bishop {
-+ player: Player
-+ possible_moves(): vector<Move>
-+ piece_type(): PieceType
-+ clone(): unique_ptr<Piece>
++player: Player
++possible_moves(Board &board, Point from): vector<Move>
++piece_type(): PieceType
++clone(): unique_ptr<Piece>
 }
+Bishop -u-|> Piece
+Bishop "1" *--> "1" Player
 
 class Rook {
-+ player: Player
-+ possible_moves(): vector<Move>
-+ piece_type(): PieceType
-+ clone(): unique_ptr<Piece>
++player: Player
++possible_moves(Board &board, Point from): vector<Move>
++piece_type(): PieceType
++clone(): unique_ptr<Piece>
 }
+Rook -u-|> Piece
+Rook "1" *--> "1" Player
 
 class Queen {
-+ player: Player
-+ possible_moves(): vector<Move>
-+ piece_type(): PieceType
-+ clone(): unique_ptr<Piece>
++player: Player
++possible_moves(Board &board, Point from): vector<Move>
++piece_type(): PieceType
++clone(): unique_ptr<Piece>
 }
+Queen -u-|> Piece
+Queen "1" *--> "1" Player
 
 class King {
-+ player: Player
-+ possible_moves(): vector<Move>
-+ piece_type(): PieceType
-+ clone(): unique_ptr<Piece>
++player: Player
++possible_moves(Board &board, Point from): vector<Move>
++piece_type(): PieceType
++clone(): unique_ptr<Piece>
 }
-
-Pawn -u-|> Piece
-Knight -u-|> Piece
-Bishop -u-|> Piece
-Rook -u-|> Piece
-Queen -u-|> Piece
 King -u-|> Piece
+King "1" *--> "1" Player
 
-Pawn *-d-> Player
-Knight *-d-> Player
-Bishop *-d-> Player
-Rook *-d-> Player
-Queen *-d-> Player
-King *-d-> Player
-
-class Board {
-+ pieces: unique_ptr<Piece>[8][8]
-+ en_passent_square: Point
-+ can_castle: bool[4]
-}
-Board *-d-> Piece
-Board *-d-> Point
-
-class Game {
-}
-Game *-d-> Board
-Game *-d-> Player
-
-
-abstract class Bot {
-+ best_move(Game &game): Move
+class Point {
++x: int 
++y: int
++in_bounds(): bool
++algebraic(): string
++operator+(Point other): Point
++operator-(Point other): Point
 }
 
-class BumblingBuffoonBot {
-+ best_move(Game &game): Move
+class Setup {
+-board: Board
+-to_move: Player
+-add_piece(Point point, PieceType piece, Player player): void
+-remove_piece(Point point): void
++run_setup(): void
++perform_command(string command): void
 }
-class SlightlyCompetentBot {
-+ best_move(Game &game): Move
-}
-class AverageCsStudentBot {
-+ best_move(Game &game): Move
-}
-class ChuckNorrisBot {
-+ best_move(Game &game): Move
-}
-BumblingBuffoonBot -u-|> Bot
-SlightlyCompetentBot -u-|> Bot
-AverageCsStudentBot -u-|> Bot
-ChuckNorrisBot -u-|> Bot
+Setup "1" *--> "1" Board
+Setup "1" *--> "1" Player
 
-class Observer {
-
+enum Color {
+White
+Black
+Red
+Green
+Blue
+Cyan
+Yellow
+Magenta
+Orange
+Brown
 }
+
+class Xwindow {
+-d: Display *
+-w: Window
+-s: int
+-gc: GC
+-colors: Color[10]
++fillRectangle(int x, int y, int w, int h, int color): void
++drawString(int x, int y, string msg): void
+}
+Xwindow "1" *-r-> "10" Color
+
+ChuckNorrisBot -[hidden]r- Game
+PieceType -[hidden]r- Bot
 
 @enduml

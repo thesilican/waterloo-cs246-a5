@@ -9,11 +9,12 @@ enum class Player;
 
 class Setup {
     Board board;
-    void add_piece(Point point, Piece* piece);
-    void remove_piece(Point point);
-    public:
     Player to_move;
-    void run_setup(); //text command loop
+    void add_piece(Point point, PieceType piece, Player player);
+    void remove_piece(Point point);
+
+  public:
+    void run_setup(); // text command loop
     void perform_command(std::string command);
 };
 

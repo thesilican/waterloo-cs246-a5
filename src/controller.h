@@ -17,19 +17,21 @@ enum class ControllerState {
 };
 
 class Controller : public Subject {
+    bool command_loop_end = false;
+    void setup();
+    // Text command loop for game
+    void run_game();
+    void do_game_command(std::string command);
+
   public:
-    Setup s;
-    Game g;
+    Setup setup;
+    Game game;
     ControllerState state;
     int white_wins;
     int black_wins;
     int draws;
-    bool command_loop_end = false;
-    void command_loop(); // outermost text command loop, can choose to setup or
-                         // start game
-    void setup();
-    void run_game(); // text command loop for game
-    void do_game_command(std::string command);
+    // Outermost text command loop, can choose to setup or start game
+    void command_loop();
 };
 
 #endif

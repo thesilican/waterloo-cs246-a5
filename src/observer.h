@@ -9,7 +9,7 @@ class Subject;
 class Xwindow;
 
 class Observer {
-    Subject &s;
+    Subject &subject;
 
   public:
     Observer(Subject &s);
@@ -37,8 +37,8 @@ class Subject {
     std::vector<Observer *> games;
 
   public:
-    void attach(Observer &o);
-    void deattach(Observer &o);
+    void attach(Observer *o);
+    void deattach(Observer *o);
     void notify_observers(Controller &controller);
 };
 
