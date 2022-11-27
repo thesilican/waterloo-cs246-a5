@@ -1,6 +1,9 @@
-#include "point.h"
+#include "controller.h"
+#include "textui.h"
 #include <iostream>
 
 int main() {
-    Point a = Point("z1");
+    Controller c;
+    TextUi t(c);
+    c.command_loop();
 }

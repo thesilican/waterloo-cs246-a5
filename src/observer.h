@@ -17,26 +17,11 @@ class Observer {
     virtual ~Observer();
 };
 
-class TextUi : public Observer {
-  public:
-    TextUi(Subject &s);
-    // outputs board or who wins or final score to text output
-    void notify(Controller &controller) override;
-};
-
-class GraphicsUi : public Observer {
-    Xwindow window;
-
-  public:
-    GraphicsUi(Subject &s);
-    // outputs board or who wins or final score to graphics output
-    void notify(Controller &controller) override;
-};
-
 class Subject {
     std::vector<Observer *> games;
 
   public:
+    Subject();
     void attach(Observer *o);
     void deattach(Observer *o);
     void notify_observers(Controller &controller);

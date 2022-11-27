@@ -3,9 +3,13 @@
 #include <string>
 
 class Point {
+
   public:
     int x, y;
 
+    // Constructs the point (0, 0)
+    Point();
+    // Construct the point (x, y)
     Point(int x, int y);
     // Constructor using algebraic notation
     // e.g. a5
@@ -18,5 +22,8 @@ class Point {
 
 Point operator+(Point a, Point b);
 Point operator-(Point a, Point b);
+bool operator==(Point a, Point b);
+bool operator!=(Point a, Point b);
+std::ostream &operator<<(std::ostream &o, Point p);
 
 #endif

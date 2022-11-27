@@ -1,5 +1,8 @@
 #include "point.h"
 
+Point::Point() : x(0), y(0) {
+}
+
 Point::Point(int x, int y) : x{x}, y{y} {
 }
 
@@ -29,4 +32,17 @@ Point operator+(Point a, Point b) {
 
 Point operator-(Point a, Point b) {
     return Point(a.x - b.x, a.y - b.y);
+}
+
+bool operator==(Point a, Point b) {
+    return (a.x == b.x) && (a.y == b.y);
+}
+
+bool operator!=(Point a, Point b) {
+    return !(a == b);
+}
+
+std::ostream &operator<<(std::ostream &o, Point p) {
+    o << p.algebraic();
+    return o;
 }

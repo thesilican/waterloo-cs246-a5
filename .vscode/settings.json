@@ -61,7 +61,12 @@
     "variant": "cpp",
     "algorithm": "cpp",
     "__availability": "cpp",
-    "iterator": "cpp"
+    "iterator": "cpp",
+    "random": "cpp",
+    "__tree": "cpp",
+    "map": "cpp",
+    "numeric": "cpp",
+    "memory_resource": "cpp"
   },
   "editor.formatOnSave": false
 }

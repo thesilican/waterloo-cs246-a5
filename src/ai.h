@@ -1,5 +1,7 @@
 #ifndef AI_H
 #define AI_H
+#include "move.h"
+#include "game.h"
 class Move;
 class Game;
 
