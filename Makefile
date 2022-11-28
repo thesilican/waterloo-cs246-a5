@@ -41,3 +41,6 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc $(HEAD)
 .PHONY: debug-makefile
 debug-makefile:
 	@echo $(CXXFLAGS)
+
+test: all
+	test/test.py

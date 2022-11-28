@@ -1,4 +1,5 @@
 #include "debug.h"
+#include "point.h"
 #include <iostream>
 
 void dprint(std::string s) {

@@ -12,11 +12,15 @@ enum class Player;
 
 enum class Player { White, Black };
 
-std::ostream &operator<<(std::ostream &o, Player p);
+Player player_from_char(char c);
+
+char player_to_char(Player p);
 
 enum class PieceType { Pawn, Knight, Bishop, Rook, Queen, King };
 
-std::ostream &operator<<(std::ostream &o, PieceType p);
+PieceType piece_type_from_char(char c);
+
+char piece_type_to_char(PieceType p);
 
 class Piece {
   public:
@@ -25,16 +29,20 @@ class Piece {
     virtual std::vector<Move> possible_moves(Board &board, Point from) = 0;
     virtual PieceType piece_type() = 0;
     virtual std::unique_ptr<Piece> clone();
+    virtual char to_char() = 0;
     virtual ~Piece();
 };
 
 std::unique_ptr<Piece> new_piece(PieceType type, Player player);
+
+std::unique_ptr<Piece> piece_from_char(char c);
 
 class Pawn : public Piece {
   public:
     Pawn(Player player);
     std::vector<Move> possible_moves(Board &board, Point from) override;
     PieceType piece_type() override;
+    char to_char() override;
 };
 
 class Knight : public Piece {
@@ -42,6 +50,7 @@ class Knight : public Piece {
     Knight(Player player);
     std::vector<Move> possible_moves(Board &board, Point from) override;
     PieceType piece_type() override;
+    char to_char() override;
 };
 
 class Bishop : public Piece {
@@ -49,6 +58,7 @@ class Bishop : public Piece {
     Bishop(Player player);
     std::vector<Move> possible_moves(Board &board, Point from) override;
     PieceType piece_type() override;
+    char to_char() override;
 };
 
 class Rook : public Piece {
@@ -56,6 +66,7 @@ class Rook : public Piece {
     Rook(Player player);
     std::vector<Move> possible_moves(Board &board, Point from) override;
     PieceType piece_type() override;
+    char to_char() override;
 };
 
 class Queen : public Piece {
@@ -63,6 +74,7 @@ class Queen : public Piece {
     Queen(Player player);
     std::vector<Move> possible_moves(Board &board, Point from) override;
     PieceType piece_type() override;
+    char to_char() override;
 };
 
 class King : public Piece {
@@ -70,6 +82,7 @@ class King : public Piece {
     King(Player player);
     std::vector<Move> possible_moves(Board &board, Point from) override;
     PieceType piece_type() override;
+    char to_char() override;
 };
 
 #endif

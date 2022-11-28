@@ -1,24 +1,22 @@
 #include "game.h"
 
-Game::Game() {
-    board = Board();
-    move_history = std::vector<Board>();
+Game::Game() : move_history(), board() {
 }
 
-Game::Game(Board b) {
-    board = std::move(b);
-    move_history = std::vector<Board>();
+Game::Game(std::string fen) : move_history(), board(fen) {
 }
 
-void Game::make_move(Point from, Point to) {
-    make_move(from, to, PieceType::Queen);
+Game::Game(Board b) : move_history(), board(std::move(b)) {
 }
 
-void Game::make_move(Point from, Point to, PieceType promotes_to) {
-    PieceType piece = board.get(from)->piece_type();
-    board.make_move(Move(piece, from, to, promotes_to));
+void Game::make_move(Move move) {
+    move_history.push_back(board.clone());
+    board.make_move(move);
 }
 
 void Game::undo_move() {
-    throw std::runtime_error("not implemented");
+    if (move_history.size() == 0)
+        throw std::runtime_error("cannot undo move");
+    board = move_history[move_history.size() - 1].clone();
+    move_history.pop_back();
 }

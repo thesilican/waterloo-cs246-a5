@@ -61,3 +61,25 @@ unsigned long long int Zobrist::update_piece(unsigned long long int h, int i, in
     h ^= zobrist_table[i][j][int_form[piece]];
     return h;
 }
+
+unsigned long long int Zobrist::new_turn(unsigned long long int h) {
+    h ^= is_black;
+}
+
+unsigned long long int Zobrist::update_castling(unsigned long long int h, bool castle[4], bool old_castle[4]) {
+    for (int i = 0; i < 4; i++) {
+        if (old_castle[i] != castle[i]) {
+            h ^= can_castle[i];
+        }
+    }
+    return h;
+}
+
+unsigned long long int Zobrist::update_enpassant(unsigned long long int h, bool can_enpassant[8], bool old_enpassant[8]) {
+    for (int i = 0; i < 8; i++) {
+        if (old_enpassant[i] != can_enpassant[i]) {
+            h ^= en_passant[i];
+        }
+    }
+    return h;
+}

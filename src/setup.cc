@@ -24,6 +24,10 @@ void Setup::clear_pieces() {
     }
 }
 
+void Setup::set_fen(std::string fen) {
+    board = Board(fen);
+}
+
 Game Setup::finish() {
     return Game(board.clone());
 }

@@ -40,6 +40,9 @@ class Zobrist {
                                     bool castle[4], bool can_en_passant[8]);
     unsigned long long int update_piece(unsigned long long int h, int i, int j,
                                         char piece);
+    unsigned long long int new_turn(unsigned long long int h);
+    unsigned long long int update_castling(unsigned long long int h, bool castle[4], bool old_castle[4]);
+    unsigned long long int update_enpassant(unsigned long long int h, bool can_en_passant[8], bool old_enpassant[8]);
 };
 
 #endif

@@ -17,6 +17,7 @@ class Setup {
     void add_piece(Point point, PieceType piece, Player player);
     void remove_piece(Point point);
     void clear_pieces();
+    void set_fen(std::string fen);
     Game finish();
 
     void run_setup(); // text command loop

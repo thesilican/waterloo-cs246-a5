@@ -6,16 +6,17 @@ class Move;
 class Board;
 
 class Game {
+
     std::vector<Board> move_history;
 
   public:
     Board board;
 
     Game();
+    Game(std::string fen);
     // used when first done setup
     Game(Board b);
-    void make_move(Point from, Point to);
-    void make_move(Point from, Point to, PieceType promotes_to);
+    void make_move(Move move);
     void undo_move();
 };
 

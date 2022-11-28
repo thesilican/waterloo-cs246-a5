@@ -1,0 +1,12 @@
+{
+  "Starting Position": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  "King's Pawn Opening": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+  "Evan's Gambit": "r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4",
+  "Checks": "2r5/4q3/8/3K4/8/2qB4/6P1/3r3b w - - 0 1",
+  "Basic Castling 1": "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1",
+  "Basic Castling 2": "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b KQkq - 0 1",
+  "Castling Through Check 1": "3rkr2/8/8/8/8/8/PPP1P1PP/R3K2R w KQ - 0 1",
+  "Pawn Promotion": "8/PPPPPPPP/4K3/8/8/4k3/pppppppp/8 w - - 0 1",
+  "En-Passent 1": "4k3/8/8/5Pp1/8/8/8/4K3 w - g6 0 1",
+  "En-Passent 2": "4k3/8/8/8/1pPp4/8/8/4K3 b - c3 0 1"
+}

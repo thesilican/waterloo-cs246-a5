@@ -1,27 +1,43 @@
 #include "move.h"
 #include "debug.h"
+#include <stdexcept>
 
-Move::Move(PieceType piece, Point from, Point to)
-    : piece(piece), from(from), to(to), promotes_to(PieceType::Queen) {
+Move::Move(Point from, Point to) : from(from), to(to), has_promotes_to(false) {
 }
 
-Move::Move(PieceType piece, Point from, Point to, PieceType promotes_to)
-    : piece(piece), from(from), to(to), promotes_to(promotes_to) {
+Move::Move(Point from, Point to, PieceType promotes_to)
+    : from(from), to(to), has_promotes_to(true), promotes_to(promotes_to) {
+}
+
+Move::Move(std::string uci) {
+    if (uci.size() < 4 || uci.size() > 5) {
+        throw std::runtime_error("invalid uci: " + uci);
+    }
+    from = Point(uci.substr(0, 2));
+    to = Point(uci.substr(2, 4));
+    if (uci.size() == 5) {
+        promotes_to = piece_type_from_char(uci[4]);
+    } else {
+        has_promotes_to = false;
+    }
 }
 
 bool operator==(Move a, Move b) {
-    return a.from == b.from && a.to == b.to && a.piece == b.piece &&
-           a.promotes_to == b.promotes_to;
+    return a.from == b.from && a.to == b.to &&
+           a.has_promotes_to == b.has_promotes_to &&
+           (!a.has_promotes_to || a.promotes_to == b.promotes_to);
 }
 
 bool operator!=(Move a, Move b) {
     return !(a == b);
 }
 
-std::ostream &operator<<(std::ostream &o, Move m) {
-    o << m.piece << m.from << m.to;
-    if ((m.to.y == 0 || m.to.y == 7) && m.piece == PieceType::Pawn) {
-        o << "(" << m.promotes_to << ")";
+std::string Move::uci() {
+    std::string result;
+    result += from.algebraic();
+    result += to.algebraic();
+    if (has_promotes_to) {
+        result += piece_type_to_char(promotes_to);
     }
-    return o;
+    return result;
 }
