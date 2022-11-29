@@ -175,18 +175,32 @@ std::vector<Move> Pawn::possible_moves(Board &board, Point from) {
     Point cl = from + fwd + Point(-1, 0);
     bool cl_possible =
         cl.in_bounds() && ((board.get(cl) != nullptr &&
-                            board.get(cl)->player != board.get(cl)->player) ||
+                            board.get(cl)->player != player) ||
                            cl == board.en_passent_square);
     if (cl_possible) {
-        moves.push_back(Move(from, cl));
+        if (m1.y == (white ? 7 : 0)) {
+            moves.push_back(Move(from, cl, PieceType::Queen));
+            moves.push_back(Move(from, cl, PieceType::Rook));
+            moves.push_back(Move(from, cl, PieceType::Bishop));
+            moves.push_back(Move(from, cl, PieceType::Knight));
+        } else {
+            moves.push_back(Move(from, cl));
+        }
     }
     Point cr = from + fwd + Point(1, 0);
     bool cr_possible =
         cr.in_bounds() && ((board.get(cr) != nullptr &&
-                            board.get(cr)->player != board.get(cr)->player) ||
+                            board.get(cr)->player != player) ||
                            cr == board.en_passent_square);
     if (cr_possible) {
-        moves.push_back(Move(from, cr));
+        if (m1.y == (white ? 7 : 0)) {
+            moves.push_back(Move(from, cr, PieceType::Queen));
+            moves.push_back(Move(from, cr, PieceType::Rook));
+            moves.push_back(Move(from, cr, PieceType::Bishop));
+            moves.push_back(Move(from, cr, PieceType::Knight));
+        } else {
+            moves.push_back(Move(from, cr));
+        }
     }
     return moves;
 }
@@ -342,18 +356,20 @@ std::vector<Move> King::possible_moves(Board &board, Point from) {
     bool white = board.to_move == Player::White;
     int br = white ? 0 : 7;
     bool can_castle_ks = board.can_castle[white ? 0 : 2];
-    for (int i = 1; i <= 3; i++) {
+    for (int i = 5; i <= 6; i++) {
         if (board.get(Point(i, br)) != nullptr) {
             can_castle_ks = false;
+            break;
         }
     }
     if (can_castle_ks) {
         moves.push_back(Move(Point(4, br), Point(6, br)));
     }
     bool can_castle_qs = board.can_castle[white ? 1 : 3];
-    for (int i = 5; i <= 6; i++) {
+    for (int i = 1; i <= 3; i++) {
         if (board.get(Point(i, br)) != nullptr) {
             can_castle_qs = false;
+            break;
         }
     }
     if (can_castle_qs) {

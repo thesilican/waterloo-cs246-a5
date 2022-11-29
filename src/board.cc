@@ -52,23 +52,46 @@ std::vector<Move> Board::possible_moves() {
 }
 
 std::vector<Move> Board::legal_moves() {
+    bool white = to_move == Player::White;
     std::vector<Move> legal_moves;
     for (auto move : possible_moves()) {
         bool legal = true;
-        Board board = this->clone();
-        board.make_move(move);
 
         // Check for checks
+        Board board = this->clone();
+        board.make_move(move);
         std::vector<Move> child_moves = board.possible_moves();
         for (auto cmove : child_moves) {
-            if (board.get(cmove.to) != nullptr &&
-                board.get(cmove.to)->piece_type() == PieceType::King) {
+            std::unique_ptr<Piece> &p = board.get(cmove.to);
+            if (p != nullptr && p->piece_type() == PieceType::King &&
+                p->player == to_move) {
                 legal = false;
                 break;
             }
         }
 
         // Check for castling through check
+        int br = white ? 0 : 7;
+        if (move.from == Point(4, br) && get(move.from) != nullptr &&
+            get(move.from)->piece_type() == PieceType::King &&
+            move.to.y == br && (move.to.x == 2 || move.to.x == 6)) {
+
+            Board board = this->clone();
+            Point middle;
+            if (move.to.x == 6) {
+                middle = Point(5, br);
+            } else if (move.to.x == 2) {
+                middle = Point(3, br);
+            }
+            board.make_move(Move(move.from, middle));
+            std::vector<Move> child_moves = board.possible_moves();
+            for (auto cmove : child_moves) {
+                if (cmove.to == middle) {
+                    legal = false;
+                    break;
+                }
+            }
+        }
 
         if (legal) {
             legal_moves.push_back(move);
@@ -78,7 +101,18 @@ std::vector<Move> Board::legal_moves() {
 }
 
 bool Board::in_check() {
-    throw std::runtime_error("not implemented");
+    Board board = this->clone();
+    board.en_passent_square = Point(-1, -1);
+    board.to_move = to_move == Player::White ? Player::Black : Player::White;
+    std::vector<Move> child_moves = board.possible_moves();
+    for (auto cmove : child_moves) {
+        std::unique_ptr<Piece> &p = board.get(cmove.to);
+        if (p != nullptr && p->piece_type() == PieceType::King &&
+            p->player == to_move) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Board::is_checkmate() {
@@ -130,12 +164,14 @@ void Board::make_move(Move m) {
     if (piece == PieceType::Pawn &&
         ((white && m.from.y == 1 && m.to.y == 3) ||
          (!white && m.from.y == 6 && m.to.y == 4))) {
-        Point ep = Point(m.from.x, white ? 2 : 6);
+        Point ep = Point(m.from.x, white ? 3 : 4);
         Point l = ep + Point(1, 0);
         Point r = ep + Point(-1, 0);
         if ((l.in_bounds() && get(l) != nullptr && get(l)->player != to_move) ||
             (r.in_bounds() && get(r) != nullptr && get(r)->player != to_move)) {
             en_passent_square = ep;
+        } else {
+            en_passent_square = Point(-1, -1);
         }
     } else {
         en_passent_square = Point(-1, -1);
@@ -260,7 +296,7 @@ std::string Board::fen() {
 Board::Board(std::string fen) {
     static std::regex fen_regex =
         std::regex("^([PNBRQKpnbrqk1-8/]+) (w|b) (-|K?Q?k?q?) (-|[a-h][1-8]) "
-                   "(\\d) (\\d)$");
+                   "(\\d+) (\\d+)$");
     std::smatch fen_result;
     if (!std::regex_match(fen, fen_result, fen_regex)) {
         throw std::runtime_error("invalid fen: " + fen);

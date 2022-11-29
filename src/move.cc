@@ -16,6 +16,7 @@ Move::Move(std::string uci) {
     from = Point(uci.substr(0, 2));
     to = Point(uci.substr(2, 4));
     if (uci.size() == 5) {
+        has_promotes_to = true;
         promotes_to = piece_type_from_char(uci[4]);
     } else {
         has_promotes_to = false;

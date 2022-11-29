@@ -5,18 +5,27 @@
 class Move;
 class Board;
 
+// Represents a chess game with move undo capabilities
 class Game {
-
-    std::vector<Board> move_history;
+    // The board history stack
+    std::vector<Board> history;
 
   public:
+    // The current board state of the game
     Board board;
 
+    // Construct a game with a default board
     Game();
-    Game(std::string fen);
-    // used when first done setup
+    // Construct a game with a given initial board
     Game(Board b);
+    // Construct a game with a board fen
+    Game(std::string fen);
+
+    // Make a move to the current board,
+    // pushing the previous board to the history stack
     void make_move(Move move);
+
+    // Pop a board off the history stack
     void undo_move();
 };
 

@@ -1,23 +1,34 @@
 #ifndef MOVE_H
 #define MOVE_H
+#include "board.h"
 #include "piece.h"
 #include "point.h"
 #include <memory>
 #include <optional>
-#include "board.h"
 enum class PieceType;
 class Point;
 class Piece;
 
+// Represents a piece movement from one point to another
 class Move {
   public:
+    // The square the piece is moving from
     Point from;
+    // The square the piece is moving to
     Point to;
+    // Whether the move contains promotion piece type
     bool has_promotes_to;
+    // The piece type that a pawn movement promotes to
+    // undefined value if has_promotes_to is false
     PieceType promotes_to;
+
+    // Construct a move from a UCI extended algebraic notation string
     Move(std::string uci);
+    // Construct a move with no promotion piece type
     Move(Point from, Point to);
+    // Construct a move with a promotion piece type
     Move(Point from, Point to, PieceType promotes_to);
+    // Returns the UCI string representation of the move
     std::string uci();
 };
 

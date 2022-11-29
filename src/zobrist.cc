@@ -64,6 +64,7 @@ unsigned long long int Zobrist::update_piece(unsigned long long int h, int i, in
 
 unsigned long long int Zobrist::new_turn(unsigned long long int h) {
     h ^= is_black;
+    return h;
 }
 
 unsigned long long int Zobrist::update_castling(unsigned long long int h, bool castle[4], bool old_castle[4]) {
