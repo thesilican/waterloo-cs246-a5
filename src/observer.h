@@ -3,6 +3,7 @@
 #include "game.h"
 #include "window.h"
 #include <vector>
+#include <memory>
 class Game;
 class Controller;
 class Subject;

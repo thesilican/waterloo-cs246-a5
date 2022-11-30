@@ -3,7 +3,7 @@
 #include <string>
 
 // General-purpose test function
-void test_run_suite();
+void test_run();
 
 // Test function for generating legal moves
 void test_gen_moves(std::string fen);

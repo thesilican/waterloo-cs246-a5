@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-void test_run_suite() {
+void test_run() {
 }
 
 void test_gen_moves(std::string fen) {
