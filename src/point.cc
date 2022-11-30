@@ -1,4 +1,5 @@
 #include "point.h"
+#include <stdexcept>
 
 Point::Point() : x(0), y(0) {
 }

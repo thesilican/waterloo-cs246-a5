@@ -1,6 +1,7 @@
 #include "piece.h"
 #include "debug.h"
 #include <string>
+#include <stdexcept>
 
 Player player_from_char(char c) {
     if (c == 'w') {
@@ -108,6 +109,7 @@ std::unique_ptr<Piece> new_piece(PieceType type, Player player) {
     case PieceType::King:
         return std::unique_ptr<Piece>(new King(player));
     }
+    throw std::runtime_error("this shouldn't happen");
 }
 
 std::unique_ptr<Piece> piece_from_char(char c) {

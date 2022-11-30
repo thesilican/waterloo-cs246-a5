@@ -5,9 +5,9 @@ else
 CXXFLAGS := -std=c++14 -Wall
 endif
 ifeq ($(shell uname), Darwin)
-LINKFLAGS := -Wall -lX11 -L /opt/homebrew/lib
+LINKFLAGS := -lX11 -L /opt/homebrew/lib
 else
-LINKFLAGS := -Wall -lX11
+LINKFLAGS := -lX11
 endif
 
 BIN_PATH := bin
@@ -34,7 +34,7 @@ clean:
 
 $(TARGET): $(OBJ)
 	mkdir -p $(BIN_PATH)
-	$(CXX) $(LINKFLAGS) -o $(TARGET) $(OBJ)
+	$(CXX) $(OBJ) $(LINKFLAGS) -o $(TARGET)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc $(HEAD)
 	mkdir -p $(OBJ_PATH)

@@ -5,6 +5,7 @@
 #include "point.h"
 #include <iostream>
 #include <vector>
+#include <memory>
 class Point;
 class Move;
 class Board;

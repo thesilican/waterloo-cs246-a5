@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from chess import Board, Move
 from termcolor import colored
 import os.path

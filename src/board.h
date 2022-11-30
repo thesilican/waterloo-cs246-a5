@@ -6,7 +6,7 @@
 #include <array>
 #include <iostream>
 #include <memory>
-#include <optional>
+#include <vector>
 class Point;
 class Piece;
 class Move;
