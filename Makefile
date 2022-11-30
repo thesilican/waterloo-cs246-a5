@@ -30,12 +30,14 @@ run: all
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET) $(BIN_PATH)/* $(OBJ_PATH)/*
+	rm -rf $(TARGET) $(BIN_PATH) $(OBJ_PATH)
 
 $(TARGET): $(OBJ)
+	mkdir -p $(BIN_PATH)
 	$(CXX) $(LINKFLAGS) -o $(TARGET) $(OBJ)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc $(HEAD)
+	mkdir -p $(OBJ_PATH)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 .PHONY: debug-makefile
