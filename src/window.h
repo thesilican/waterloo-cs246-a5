@@ -18,7 +18,6 @@ class Xwindow {
     Window w;
     int s;
     GC gc;
-    unsigned long colours[10];
 
   public:
     Xwindow(int width = 500,
@@ -27,22 +26,8 @@ class Xwindow {
     Xwindow(const Xwindow &) = delete;
     Xwindow &operator=(const Xwindow &) = delete;
 
-    // Available colours.
-    enum {
-        White = 0,
-        Black = 1,
-        Red = 2,
-        Green = 3,
-        Blue = 4,
-        Cyan = 5,
-        Yellow = 6,
-        Magenta = 7,
-        Orange = 8,
-        Brown
-    };
-
     // Draws a rectangle
-    void fillRectangle(int x, int y, int width, int height, int colour = Black);
+    void fillRectangle(int x, int y, int width, int height, int colour = 0);
 
     // Draw a pixel image
     void drawImage(int x, int y, PixelImg &img);

@@ -1,21 +1,8 @@
+#include "assets.h"
 #include "controller.h"
 #include "testing.h"
 #include "textui.h"
 #include <iostream>
-
-static PixelImg img(10, 10,
-                    {
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                    });
 
 int main(int argc, char *argv[]) {
     if (argc >= 2 && std::string(argv[1]) == "--test") {
@@ -40,9 +27,14 @@ int main(int argc, char *argv[]) {
     // c.command_loop();
 
     // Test window
-    Xwindow win;
+    Xwindow win(500, 500);
 
-    win.drawImage(10, 10, img);
+    win.drawImage(0, 0, BOARD);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            win.drawImage(50 + i * 50, 50 + j * 50, BLACK_KING);
+        }
+    }
     win.flush();
     getchar();
     return 0;

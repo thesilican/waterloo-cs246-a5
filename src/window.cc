@@ -9,6 +9,14 @@
 
 PixelImg::PixelImg(int width, int height, std::vector<std::vector<int>> data)
     : data(data), width(width), height(height) {
+    if (data.size() != height) {
+        throw std::runtime_error("pixel image has mismatching height");
+    }
+    for (auto x : data) {
+        if (x.size() != width) {
+            throw std::runtime_error("pixel image has mismatching width");
+        }
+    }
 }
 
 Xwindow::Xwindow(int width, int height) {
@@ -20,29 +28,12 @@ Xwindow::Xwindow(int width, int height) {
     w = XCreateSimpleWindow(d, RootWindow(d, s), 10, 10, width, height, 1,
                             BlackPixel(d, s), WhitePixel(d, s));
     XSelectInput(d, w, ExposureMask | KeyPressMask);
-    XMapRaised(d, w);
+    XMapWindow(d, w);
 
-    Pixmap pix =
-        XCreatePixmap(d, w, width, height, DefaultDepth(d, DefaultScreen(d)));
-    gc = XCreateGC(d, pix, 0, (XGCValues *)0);
+    gc = XCreateGC(d, w, 0, NULL);
 
     XFlush(d);
-    XFlush(d);
-
-    // Set up colours.
-    XColor xcolour;
-    Colormap cmap;
-    char color_vals[10][10] = {"white", "black",  "red",     "green",  "blue",
-                               "cyan",  "yellow", "magenta", "orange", "brown"};
-
-    cmap = DefaultColormap(d, DefaultScreen(d));
-    for (int i = 0; i < 5; ++i) {
-        XParseColor(d, cmap, color_vals[i], &xcolour);
-        XAllocColor(d, cmap, &xcolour);
-        colours[i] = xcolour.pixel;
-    }
-
-    XSetForeground(d, gc, colours[Black]);
+    usleep(10000);
 
     // Make window non-resizeable.
     XSizeHints hints;
@@ -52,7 +43,6 @@ Xwindow::Xwindow(int width, int height) {
     hints.width = hints.base_width = hints.min_width = hints.max_width = width;
     XSetNormalHints(d, w, &hints);
 
-    usleep(1000);
 
     // Make sure we don't race against the Window being shown
     XEvent ev;
@@ -65,21 +55,19 @@ Xwindow::Xwindow(int width, int height) {
 
 Xwindow::~Xwindow() {
     XFreeGC(d, gc);
+    XUnmapWindow(d, w);
+    XDestroyWindow(d, w);
     XCloseDisplay(d);
 }
 
-void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
-    XSetForeground(d, gc, colours[colour]);
+void Xwindow::fillRectangle(int x, int y, int width, int height, int color) {
+    XSetForeground(d, gc, color);
     XFillRectangle(d, w, gc, x, y, width, height);
-    XSetForeground(d, gc, colours[Black]);
+    XSetForeground(d, gc, 0x000000);
 }
 
 void Xwindow::flush() {
-    XSynchronize(d, true);
-    usleep(20000);
     XFlush(d);
-    usleep(20000);
-    XSynchronize(d, false);
 }
 
 void Xwindow::drawString(int x, int y, std::string msg) {
@@ -87,9 +75,11 @@ void Xwindow::drawString(int x, int y, std::string msg) {
 }
 
 void Xwindow::drawImage(int x, int y, PixelImg &img) {
-    for (int i = 0; i < img.height; i++) {
-        for (int j = 0; j < img.width; j++) {
-            fillRectangle(i + x, j + y, 1, 1, img.data[j][i]);
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            if (img.data[j][i] != -1) {
+                fillRectangle(i + x, j + y, 1, 1, img.data[j][i]);
+            }
         }
     }
 }
