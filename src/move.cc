@@ -42,3 +42,11 @@ std::string Move::uci() {
     }
     return result;
 }
+
+std::unique_ptr<Piece> &Move::piece(Board &b) {
+    return b.get(from);
+}
+
+std::unique_ptr<Piece> &Move::captured(Board &b) {
+    return b.get(to);
+}

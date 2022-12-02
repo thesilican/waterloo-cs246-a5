@@ -3,6 +3,7 @@
 #include "testing.h"
 #include "textui.h"
 #include <iostream>
+#include "ai.h"
 
 int main(int argc, char *argv[]) {
     if (argc >= 2 && std::string(argv[1]) == "--test") {
@@ -22,9 +23,10 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     // Main loop
-    Controller c;
-    TextUi u(c);
-    c.command_loop();
+    // Controller c;
+    // TextUi u(c);
+    // c.command_loop();
+    BumblingBuffoonBot bot;
 
     // // Test window
     // Xwindow win(500, 500);

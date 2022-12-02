@@ -30,6 +30,13 @@ class Move {
     Move(Point from, Point to, PieceType promotes_to);
     // Returns the UCI string representation of the move
     std::string uci();
+
+    // Returns the piece that moved
+    // b - The board state before the move was made
+    std::unique_ptr<Piece> &piece(Board &b);
+    // Returns the piece that was captured from the board
+    // b - The board state before the move was made
+    std::unique_ptr<Piece> &captured(Board &b);
 };
 
 bool operator==(Move a, Move b);
