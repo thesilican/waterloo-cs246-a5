@@ -24,14 +24,14 @@
 */
 
 struct Eval {
-  unsigned short move;
-  float ev;
+  int move;
+  int ev;
 };
 
 class TestBot {
     // move representation: from.x (3 bits), from.y (3
     // bits), to.x (3 bits), to.y (3 bits), promote piece (4 bits) all in a
-    // 16-bit unsigned short, promote piece '*' if n/a
+    // 16-bit int, promote piece '*' if n/a
     char board[8][8];
     bool black_turn = false;
     //represents whether king/queen castling is possible assuming no obstacles between king and rook
@@ -44,12 +44,12 @@ class TestBot {
     std::unordered_map<char, int> int_form;
     std::unordered_map<int, char> char_form;
   public:
-    float evaluate(int depth);
-    Eval alpha_beta(float alpha, float beta, int depth);
-    unsigned short get_move(Point from, Point to, char promote);
-    Point get_from(unsigned short move);
-    Point get_to(unsigned short move);
-    char get_promote(unsigned short move);
+    int evaluate(int depth);
+    Eval alpha_beta(int alpha, int beta, int depth);
+    int get_move(Point from, Point to, char promote);
+    Point get_from(int move);
+    Point get_to(int move);
+    char get_promote(int move);
     void print_board_debug();
     void init_board_debug();
     bool piece_color(Point at, char color);
@@ -58,29 +58,29 @@ class TestBot {
     TestBot();
     TestBot(Board& b);
     Board get_board_object();
-    Move uncompress_move(unsigned short m);
-    unsigned short compress_move(Move m);
+    Move uncompress_move(int m);
+    int compress_move(Move m);
     //changes board state according to move, assumes move is legal
-    void move(unsigned short move);
+    void move(int move);
     //captured is '*' if no piece was captured
-    void undo_move(unsigned short move, bool is_enpassant, char captured);
+    void undo_move(int move, bool is_enpassant, char captured);
     //gives list of moves (follows movement rules, doesn't put king in check)
-    std::vector<unsigned short> legal_moves();
-    std::vector<unsigned short> all_moves();
-    void is_proper_move(unsigned short move, std::vector<unsigned short>& moves);
+    std::vector<int> legal_moves();
+    std::vector<int> all_moves();
+    void is_proper_move(int move, std::vector<int>& moves);
     
     //helpers for the above. each one assumes moving piece is of correct color
     //they also don't check if the moves put friendly king at check
-    std::vector<unsigned short> jumpers(Point at, const std::vector<Point>& targets);
-    std::vector<unsigned short> riders(Point at, const std::vector<Point>& directions);
-    std::vector<unsigned short> moves_pawn(Point at);
-    std::vector<unsigned short> moves_rook(Point at);
-    std::vector<unsigned short> moves_bishop(Point at);
-    std::vector<unsigned short> moves_knight(Point at);
-    std::vector<unsigned short> moves_queen(Point at);
-    std::vector<unsigned short> moves_king(Point at);
-    std::vector<unsigned short> moves_general(Point at);
-    std::vector<unsigned short> moves_castle(Point at);
+    std::vector<int> jumpers(Point at, const std::vector<Point>& targets);
+    std::vector<int> riders(Point at, const std::vector<Point>& directions);
+    std::vector<int> moves_pawn(Point at);
+    std::vector<int> moves_rook(Point at);
+    std::vector<int> moves_bishop(Point at);
+    std::vector<int> moves_knight(Point at);
+    std::vector<int> moves_queen(Point at);
+    std::vector<int> moves_king(Point at);
+    std::vector<int> moves_general(Point at);
+    std::vector<int> moves_castle(Point at);
     bool is_check(bool black);
 };
 

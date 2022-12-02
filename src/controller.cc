@@ -38,7 +38,7 @@ void Controller::command_loop() {
     std::string l;
     while (true) {
         std::cin >> l;
-        Move m = t.uncompress_move((t.alpha_beta(-10000,10000,5)).move);
+        Move m = t.uncompress_move((t.alpha_beta(-10000,10000,4)).move);
         game.make_move(m);
         t.move(t.compress_move(m));
         notify_observers(*this);

@@ -26,7 +26,7 @@ void test_gen_moves_bot(std::string fen) {
     Board board(fen);
     // print legal moves (one on each line)
     TestBot tb(board);
-    std::vector<unsigned short> moves = tb.legal_moves();
+    std::vector<int> moves = tb.legal_moves();
     for (auto m : moves) {
         Move mo = tb.uncompress_move(m);
         std::cout << mo.uci() << '\n';
@@ -38,7 +38,7 @@ void test_apply_move_bot(std::string fen, std::string uci) {
     Move move(uci);
     // print board fen
     TestBot tb(board);
-    unsigned short m = tb.compress_move(move);
+    int m = tb.compress_move(move);
     // std::cout << "INFO " << tb.get_from(m).x << " " << tb.get_from(m).y << " " << tb.get_to(m).x << " " << tb.get_to(m).y << " " << tb.get_promote(m) << '\n';
     // char fuckyou;
     // if (move.promotes_to == PieceType::Queen) {
