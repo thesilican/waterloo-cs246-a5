@@ -611,29 +611,23 @@ double TestBot::evaluate(int depth) {
         turn = 1;
     }
     double ev = 0;
+    int cur_player_legalmoves_size = legal_moves().size();
     //if current player's king is in check
     if (is_check(black_turn)) {
-        if (legal_moves().size() == 0) {
-            return turn*(-1000 - depth);
+        if (cur_player_legalmoves_size == 0) {
+            //current player is checkmated.
+            //return very low value MINUS depth so bot prefers earlier checkmates.
+            return -1000 - depth;
         } else {
             ev -= 5;
         }
     }
-    //if opponent player's king is in check
-    if (is_check(!black_turn)) {
-        black_turn = !black_turn;
-        bool old_ep[8];
-        copy_array(en_passant_good,old_ep);
-        if (legal_moves().size() == 0) {
-            return turn*(-1000 - depth);
-        } else {
-            ev += 5;
-        }
-        black_turn = !black_turn;
-        copy_array(old_ep,en_passant_good);
+    //stalemate
+    if (cur_player_legalmoves_size == 0) {
+        return 0; //stalemate should be neutral evaluation
     }
     double mobility;
-
+    double kings;
 }
 
 void TestBot::print_board_debug() {
