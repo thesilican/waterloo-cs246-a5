@@ -3,6 +3,7 @@
 #include "game.h"
 #include "observer.h"
 #include "setup.h"
+#include "testbot.h"
 class Setup;
 class Game;
 class Subject;

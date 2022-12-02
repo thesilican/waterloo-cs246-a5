@@ -20,7 +20,7 @@ void Controller::do_game_command(std::string command) {
 }
 
 void Controller::command_loop() {
-    game = Game("8/5P2/8/5k2/3K4/8/8/8 w - - 0 1");
+    game = Game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     // notify_observers(*this);
     // for (auto move : game.board.legal_moves()) {
     //     std::cout << move.uci() << std::endl;
@@ -33,11 +33,21 @@ void Controller::command_loop() {
     // game.make_move(Move("g8f6"));
     // game.make_move(Move("h5f7"));
 
+    TestBot t{game.board};
     notify_observers(*this);
-    char bruh;
-    std::cin >> bruh;
-    game.make_move(Move("d4d5"));
-    notify_observers(*this);
+    std::string l;
+    while (true) {
+        std::cin >> l;
+        Move m = t.uncompress_move((t.alpha_beta(-10000,10000,5)).move);
+        game.make_move(m);
+        t.move(t.compress_move(m));
+        notify_observers(*this);
+        std::cin >> l;
+        Move first(l);
+        game.make_move(l);
+        t.move(t.compress_move(l));
+        notify_observers(*this);
+        
+    }
     getchar();
-    std::cout << game.board.fen() << std::endl;
 }

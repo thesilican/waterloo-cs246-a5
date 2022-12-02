@@ -2,7 +2,7 @@ from PIL import Image
 import os.path
 
 files = [("BOARD", "board.png"), ("BLACK_KING", "black-king.png"), ("WHITE_KING", "white-king.png"),
-        ("BLACK_BISHOP", "black-king.png"), ("WHITE_BISHOP", "white-bishop.png"), ("BLACK_KNIGHT", "black-knight.png"),
+        ("BLACK_BISHOP", "black-bishop.png"), ("WHITE_BISHOP", "white-bishop.png"), ("BLACK_KNIGHT", "black-knight.png"),
         ("WHITE_KNIGHT", "white-knight.png"), ("BLACK_PAWN", "black-pawn.png"), ("WHITE_PAWN", "white-pawn.png"),
         ("BLACK_QUEEN", "black-queen.png"), ("WHITE_QUEEN", "white-queen.png"), ("BLACK_ROOK", "black-rook.png"),
         ("WHITE_ROOK", "white-rook.png"), ("ORANGE_SQUARE", "orange-square.png"), ("YELLOW_SQUARE", "yellow-square.png")]

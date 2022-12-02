@@ -59,6 +59,11 @@ void GraphicsUi::display_game(Game& game) {
                 continue;
             }
             if (p->to_char() == board[i][j]) continue;
+            if ((i + j) % 2 == 0) {
+                win.drawImage(50 + i*50, 50 + (7-j)*50, ORANGE_SQUARE);
+            } else {
+                win.drawImage(50 + i*50, 50 + (7-j)*50, YELLOW_SQUARE);
+            }
             win.drawImage(50 + i*50, 50 + (7-j)*50, get_image(p));
             board[i][j] = p->to_char();
         }

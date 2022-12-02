@@ -1,3 +1,6 @@
+#ifndef TESTBOT_H
+#define TESTBOT_H
+
 #include "point.h"
 #include "zobrist.h"
 #include "board.h"
@@ -20,6 +23,11 @@
   - currently, all legal moves vector is created from merging individual legal moves vectors, so O(n). O(1) solution?
 */
 
+struct Eval {
+  unsigned short move;
+  float ev;
+};
+
 class TestBot {
     // move representation: from.x (3 bits), from.y (3
     // bits), to.x (3 bits), to.y (3 bits), promote piece (4 bits) all in a
@@ -37,6 +45,7 @@ class TestBot {
     std::unordered_map<int, char> char_form;
   public:
     float evaluate(int depth);
+    Eval alpha_beta(float alpha, float beta, int depth);
     unsigned short get_move(Point from, Point to, char promote);
     Point get_from(unsigned short move);
     Point get_to(unsigned short move);
@@ -57,6 +66,8 @@ class TestBot {
     void undo_move(unsigned short move, bool is_enpassant, char captured);
     //gives list of moves (follows movement rules, doesn't put king in check)
     std::vector<unsigned short> legal_moves();
+    std::vector<unsigned short> all_moves();
+    void is_proper_move(unsigned short move, std::vector<unsigned short>& moves);
     
     //helpers for the above. each one assumes moving piece is of correct color
     //they also don't check if the moves put friendly king at check
@@ -72,3 +83,5 @@ class TestBot {
     std::vector<unsigned short> moves_castle(Point at);
     bool is_check(bool black);
 };
+
+#endif

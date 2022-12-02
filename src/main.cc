@@ -5,6 +5,7 @@
 #include "graphicsui.h"
 #include <iostream>
 #include "ai.h"
+#include "testbot.h"
 
 int main(int argc, char *argv[]) {
     if (argc >= 2 && std::string(argv[1]) == "--test") {
@@ -27,6 +28,11 @@ int main(int argc, char *argv[]) {
     // Controller c;
     // TextUi u(c);
     // c.command_loop();
+
+    
+
+
+
     Controller c;
     GraphicsUi g(c);
     TextUi t(c);
