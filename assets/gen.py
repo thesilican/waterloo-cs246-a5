@@ -19,7 +19,7 @@ for varname, filename in files:
                 src += ","
             r, g, b, a = img.getpixel((i, j))
             if a != 0:
-                src += f"0x{r:02x}{g:02x}{b:02x}"
+                src +=  str((r << 16) + (g << 8) + b)
             else:
                 src += "-1"
         src += "}"

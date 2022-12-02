@@ -43,7 +43,6 @@ Xwindow::Xwindow(int width, int height) {
     hints.width = hints.base_width = hints.min_width = hints.max_width = width;
     XSetNormalHints(d, w, &hints);
 
-
     // Make sure we don't race against the Window being shown
     XEvent ev;
     while (1) {
@@ -63,20 +62,19 @@ Xwindow::~Xwindow() {
 void Xwindow::fillRectangle(int x, int y, int width, int height, int color) {
     XSetForeground(d, gc, color);
     XFillRectangle(d, w, gc, x, y, width, height);
-    XSetForeground(d, gc, 0x000000);
-}
-
-void Xwindow::flush() {
-    XFlush(d);
 }
 
 void Xwindow::drawString(int x, int y, std::string msg) {
     XDrawString(d, w, DefaultGC(d, s), x, y, msg.c_str(), msg.length());
 }
 
+void Xwindow::flush() {
+    XFlush(d);
+}
+
 void Xwindow::drawImage(int x, int y, PixelImg &img) {
-    for (int i = 0; i < img.width; i++) {
-        for (int j = 0; j < img.height; j++) {
+    for (int j = 0; j < img.height; j++) {
+        for (int i = 0; i < img.width; i++) {
             if (img.data[j][i] != -1) {
                 fillRectangle(i + x, j + y, 1, 1, img.data[j][i]);
             }
