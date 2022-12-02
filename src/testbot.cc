@@ -603,6 +603,39 @@ std::vector<unsigned short> TestBot::legal_moves() {
     return final_moves;
 }
 
+double TestBot::evaluate(int depth) {
+    int turn;
+    if (black_turn) {
+        turn = -1;
+    } else {
+        turn = 1;
+    }
+    double ev = 0;
+    //if current player's king is in check
+    if (is_check(black_turn)) {
+        if (legal_moves().size() == 0) {
+            return turn*(-1000 - depth);
+        } else {
+            ev -= 5;
+        }
+    }
+    //if opponent player's king is in check
+    if (is_check(!black_turn)) {
+        black_turn = !black_turn;
+        bool old_ep[8];
+        copy_array(en_passant_good,old_ep);
+        if (legal_moves().size() == 0) {
+            return turn*(-1000 - depth);
+        } else {
+            ev += 5;
+        }
+        black_turn = !black_turn;
+        copy_array(old_ep,en_passant_good);
+    }
+    double mobility;
+
+}
+
 void TestBot::print_board_debug() {
     for (int i = 7; i >= 0; i--) {
         std::cout << i << " ";
@@ -617,23 +650,36 @@ void TestBot::print_board_debug() {
 }
 
 void TestBot::init_board_debug() {
-    board[0][0] = board[7][0] = 'R';
-    board[1][0] = board[6][0] = 'N';
-    board[2][0] = board[5][0] = 'B';
-    board[3][0] = 'Q';
-    board[4][0] = 'K';
-    board[0][7] = board[7][7] = 'r';
-    board[1][7] = board[6][7] = 'n';
-    board[2][7] = board[5][7] = 'b';
-    board[3][7] = 'q';
-    board[4][7] = 'k';
+    // board[0][0] = board[7][0] = 'R';
+    // board[1][0] = board[6][0] = 'N';
+    // board[2][0] = board[5][0] = 'B';
+    // board[3][0] = 'Q';
+    // board[4][0] = 'K';
+    // board[0][7] = board[7][7] = 'r';
+    // board[1][7] = board[6][7] = 'n';
+    // board[2][7] = board[5][7] = 'b';
+    // board[3][7] = 'q';
+    // board[4][7] = 'k';
+    // for (int i = 0; i < 8; i++) {
+    //     board[i][1] = 'P';
+    //     board[i][6] = 'p';
+    // }
+    // for (int i = 2; i < 6; i++) {
+    //     for (int j = 0; j < 8; j++) {
+    //         board[j][i] = '*';
+    //     }
+    // }
+    char new_board[8][8] = {{'*','p','*','*','*','*','P','*'},
+                            {'*','p','*','*','*','*','P','*'},
+                            {'*','p','*','*','*','*','P','*'},
+                            {'*','p','*','*','*','*','P','*'},
+                            {'*','p','k','*','*','K','P','*'},
+                            {'*','p','*','*','*','*','P','*'},
+                            {'*','p','*','*','*','*','P','*'},
+                            {'*','p','*','*','*','*','P','*'}};
     for (int i = 0; i < 8; i++) {
-        board[i][1] = 'P';
-        board[i][6] = 'p';
-    }
-    for (int i = 2; i < 6; i++) {
         for (int j = 0; j < 8; j++) {
-            board[j][i] = '*';
+            board[i][j] = new_board[i][j];
         }
     }
 }

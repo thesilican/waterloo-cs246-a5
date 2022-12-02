@@ -22,9 +22,9 @@ void Controller::do_game_command(std::string command) {
 void Controller::command_loop() {
     game = Game("8/5P2/8/5k2/3K4/8/8/8 w - - 0 1");
     // notify_observers(*this);
-    for (auto move : game.board.legal_moves()) {
-        std::cout << move.uci() << std::endl;
-    }
+    // for (auto move : game.board.legal_moves()) {
+    //     std::cout << move.uci() << std::endl;
+    // }
     // game.make_move(Move("a2a4"));
     // game.make_move(Move("e7e5"));
     // game.make_move(Move("f1c4"));
@@ -33,6 +33,6 @@ void Controller::command_loop() {
     // game.make_move(Move("g8f6"));
     // game.make_move(Move("h5f7"));
 
-    // notify_observers(*this);
+    notify_observers(*this);
     std::cout << game.board.fen() << std::endl;
 }

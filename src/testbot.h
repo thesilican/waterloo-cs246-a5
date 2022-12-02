@@ -36,6 +36,7 @@ class TestBot {
     std::unordered_map<char, int> int_form;
     std::unordered_map<int, char> char_form;
   public:
+    double evaluate(int depth);
     unsigned short get_move(Point from, Point to, char promote);
     Point get_from(unsigned short move);
     Point get_to(unsigned short move);
@@ -50,7 +51,7 @@ class TestBot {
     Board get_board_object();
     Move uncompress_move(unsigned short m);
     unsigned short compress_move(Move m);
-    //changes board state according to move, assumes move is legal
+    changes board state according to move, assumes move is legal
     void move(unsigned short move);
     //captured is '*' if no piece was captured
     void undo_move(unsigned short move, bool is_enpassant, char captured);

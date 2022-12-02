@@ -21,21 +21,21 @@ int main(int argc, char *argv[]) {
         }
         return 0;
     }
-    // // Main loop
-    // Controller c;
-    // TextUi u(c);
-    // c.command_loop();
+    // Main loop
+    Controller c;
+    TextUi u(c);
+    c.command_loop();
 
-    // Test window
-    Xwindow win(500, 500);
+    // // Test window
+    // Xwindow win(500, 500);
 
-    win.drawImage(0, 0, BOARD);
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            win.drawImage(50 + i * 50, 50 + j * 50, BLACK_KING);
-        }
-    }
-    win.flush();
-    getchar();
-    return 0;
+    // win.drawImage(0, 0, BOARD);
+    // for (int i = 0; i < 8; i++) {
+    //     for (int j = 0; j < 8; j++) {
+    //         win.drawImage(50 + i * 50, 50 + j * 50, BLACK_KING);
+    //     }
+    // }
+    // win.flush();
+    // getchar();
+    // return 0;
 }
