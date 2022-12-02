@@ -36,7 +36,7 @@ class TestBot {
     std::unordered_map<char, int> int_form;
     std::unordered_map<int, char> char_form;
   public:
-    double evaluate(int depth);
+    float evaluate(int depth);
     unsigned short get_move(Point from, Point to, char promote);
     Point get_from(unsigned short move);
     Point get_to(unsigned short move);

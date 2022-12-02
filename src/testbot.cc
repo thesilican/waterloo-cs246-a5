@@ -603,14 +603,14 @@ std::vector<unsigned short> TestBot::legal_moves() {
     return final_moves;
 }
 
-double TestBot::evaluate(int depth) {
+float TestBot::evaluate(int depth) {
     int turn;
     if (black_turn) {
         turn = -1;
     } else {
         turn = 1;
     }
-    double ev = 0;
+    float ev = 0;
     int cur_player_legalmoves_size = legal_moves().size();
     //if current player's king is in check
     if (is_check(black_turn)) {
@@ -626,8 +626,63 @@ double TestBot::evaluate(int depth) {
     if (cur_player_legalmoves_size == 0) {
         return 0; //stalemate should be neutral evaluation
     }
-    double mobility;
-    double kings;
+
+    //difference in mobilization
+    int black_mob, white_mob;
+    if (black_turn) {
+        black_mob = cur_player_legalmoves_size;
+    } else {
+        white_mob = cur_player_legalmoves_size;
+    }
+    black_turn = !black_turn;
+    bool old_ep[8];
+    copy_array(en_passant_good,old_ep);
+    for (int i = 0; i < 8; i++) en_passant_good[i] = false;
+    if (black_turn) {
+        black_mob = legal_moves().size();
+    } else {
+        white_mob = legal_moves().size();
+    }
+    copy_array(old_ep,en_passant_good);
+    black_turn = !black_turn;
+    ev += 0.1*(white_mob - black_mob);
+
+    //difference in piece counts
+    std::unordered_map<char,int> counts;
+    unsigned short white_pawns[8];
+    unsigned short black_pawns[8];
+    int white_blocked = 0, black_blocked = 0, white_doubled = 0, black_doubled = 0, white_isolated = 0, black_isolated = 0;
+    for (int i = 0; i < 8; i++) {
+        white_pawns[i] = 0;
+        black_pawns[i] = 0;
+    }
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (board[i][j] == 'p') {
+                black_pawns[i]++;
+                counts['p']++;
+                if (board[i][j-1] != '*') black_blocked++;
+            } else if (board[i][j] == 'P') {
+                white_pawns[i]++;
+                counts['P']++;
+                if (board[i][j+1] != '*') white_blocked++;
+            } else {
+                counts[board[i][j]]++;
+            }
+        }
+    }
+    for (int i = 0; i < 8; i++) {
+        if (white_pawns[i] > 1) {white_doubled += white_pawns[i];}
+        if (black_pawns[i] > 1) {black_doubled += black_pawns[i];}
+        if (white_pawns[i] > 0 && (i > 0 && white_pawns[i-1] == 0) && (i < 7 && white_pawns[i+1] == 0)) {white_isolated += white_pawns[i];}
+        if (black_pawns[i] > 0 && (i > 0 && black_pawns[i-1] == 0) && (i < 7 && black_pawns[i+1] == 0)) {black_isolated += black_pawns[i];}
+    }
+    ev -= 0.5*(white_doubled - black_doubled + white_blocked - black_blocked + white_isolated - black_isolated);
+    ev += 9*(counts['Q'] - counts['q']);
+    ev += 5*(counts['R'] - counts['r']);
+    ev += 3*(counts['B'] - counts['b'] + counts['N'] - counts['n']);
+    ev += 1*(counts['P'] - counts['p']);
+    return ev;
 }
 
 void TestBot::print_board_debug() {

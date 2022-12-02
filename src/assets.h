@@ -17,5 +17,7 @@ extern PixelImg BLACK_QUEEN;
 extern PixelImg WHITE_QUEEN;
 extern PixelImg BLACK_ROOK;
 extern PixelImg WHITE_ROOK;
+extern PixelImg ORANGE_SQUARE;
+extern PixelImg YELLOW_SQUARE;
 
 #endif

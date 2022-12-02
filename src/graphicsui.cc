@@ -4,10 +4,15 @@
 GraphicsUi::GraphicsUi(Subject& s) : Observer(s) {
     win.drawImage(0, 0, BOARD);
     win.flush();
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            board[i][j] = '.';
+        }
+    }
 }
 
 // assumes "piece" is not nullptr
-PixelImg& get_image(std::unique_ptr<Piece>& p) {
+PixelImg& GraphicsUi::get_image(std::unique_ptr<Piece>& p) {
     if (p->player == Player::White) {
         if (p->piece_type() == PieceType::Pawn) {
             return WHITE_PAWN;
@@ -43,8 +48,19 @@ void GraphicsUi::display_game(Game& game) {
     for (int j = 7; j >= 0; j--) {
         for (int i = 0; i < 8; i++) {
             std::unique_ptr<Piece>& p = game.board.get(Point(i,j));
-            if (p == nullptr) continue;
+            if (p == nullptr) {
+                if (board[i][j] == '.') continue;
+                board[i][j] = '.';
+                if ((i + j) % 2 == 0) {
+                    win.drawImage(50 + i*50, 50 + (7-j)*50, ORANGE_SQUARE);
+                    continue;
+                }
+                win.drawImage(50 + i*50, 50 + (7-j)*50, YELLOW_SQUARE);
+                continue;
+            }
+            if (p->to_char() == board[i][j]) continue;
             win.drawImage(50 + i*50, 50 + (7-j)*50, get_image(p));
+            board[i][j] = p->to_char();
         }
     }
     win.flush();
