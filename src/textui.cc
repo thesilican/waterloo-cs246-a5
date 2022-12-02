@@ -6,7 +6,7 @@ TextUi::TextUi(Subject &s) : Observer(s) {
 
 bool UNICODE_CHARS = true;
 
-std::string square_char(std::unique_ptr<Piece> &piece) {
+std::string TextUi::square_char(std::unique_ptr<Piece> &piece) {
     if (piece == nullptr) {
         return UNICODE_CHARS ? "·" : ".";
     } else if (piece->player == Player::White) {
@@ -40,7 +40,7 @@ std::string square_char(std::unique_ptr<Piece> &piece) {
     }
 }
 
-void print_game(Game &game) {
+void TextUi::print_game(Game &game) {
     for (int j = 7; j >= 0; j--) {
         std::cout << (j + 1) << " ";
         for (int i = 0; i < 8; i++) {

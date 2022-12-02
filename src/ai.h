@@ -33,26 +33,26 @@ class BumblingBuffoonBot : public Bot {
 
 // Bot Level 2
 // Prefers capturing and checks over other moves
-class SlightlyCompetentBot : public Bot {
-    std::random_device rd;
-    std::mt19937 mt{rd()};
-    std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
+// class SlightlyCompetentBot : public Bot {
+//     std::random_device rd;
+//     std::mt19937 mt{rd()};
+//     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
-  public:
-    SlightlyCompetentBot() = default;
-    Move best_move(Game &game) override;
-};
+//   public:
+//     SlightlyCompetentBot() = default;
+//     Move best_move(Game &game) override;
+// };
 
-// Bot Level 3
-// Prefers avoiding capture, capturing moves, and checks
-class AverageCsStudentBot : public Bot {
-    std::random_device rd;
-    std::mt19937 mt{rd()};
-    std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
+// // Bot Level 3
+// // Prefers avoiding capture, capturing moves, and checks
+// class AverageCsStudentBot : public Bot {
+//     std::random_device rd;
+//     std::mt19937 mt{rd()};
+//     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
-  public:
-    Move best_move(Game &game) override;
-};
+//   public:
+//     Move best_move(Game &game) override;
+// };
 
 // Bot Level 4
 class ChuckNorrisBot : public Bot {

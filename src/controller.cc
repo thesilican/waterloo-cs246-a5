@@ -34,5 +34,10 @@ void Controller::command_loop() {
     // game.make_move(Move("h5f7"));
 
     notify_observers(*this);
+    char bruh;
+    std::cin >> bruh;
+    game.make_move(Move("d4d5"));
+    notify_observers(*this);
+    getchar();
     std::cout << game.board.fen() << std::endl;
 }

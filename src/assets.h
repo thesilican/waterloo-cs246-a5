@@ -6,5 +6,16 @@
 
 extern PixelImg BOARD;
 extern PixelImg BLACK_KING;
+extern PixelImg WHITE_KING;
+extern PixelImg BLACK_BISHOP;
+extern PixelImg WHITE_BISHOP;
+extern PixelImg BLACK_KNIGHT;
+extern PixelImg WHITE_KNIGHT;
+extern PixelImg BLACK_PAWN;
+extern PixelImg WHITE_PAWN;
+extern PixelImg BLACK_QUEEN;
+extern PixelImg WHITE_QUEEN;
+extern PixelImg BLACK_ROOK;
+extern PixelImg WHITE_ROOK;
 
 #endif
