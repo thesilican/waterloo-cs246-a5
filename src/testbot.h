@@ -70,8 +70,8 @@ class TestBot {
     
     //helpers for the above. each one assumes moving piece is of correct color
     //they also don't check if the moves put friendly king at check
-    void jumpers(Point at, const std::vector<Point>& targets, std::vector<int>& moves);
-    void riders(Point at, const std::vector<Point>& directions, std::vector<int>& moves);
+    void jumpers(Point at, std::vector<Point>& targets, std::vector<int>& moves);
+    void riders(Point at, std::vector<Point>& directions, std::vector<int>& moves);
     void moves_pawn(Point at, std::vector<int>& moves);
     void moves_rook(Point at, std::vector<int>& moves);
     void moves_bishop(Point at, std::vector<int>& moves);

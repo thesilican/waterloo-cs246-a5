@@ -228,6 +228,10 @@ void TestBot::move(int move) {
     board[to.x][to.y] = piece;
 }
 
+//list of things to test
+//- use a move class
+//- use a board class and copy it
+
 //doesn't undo castling and enpassant info
 void TestBot::undo_move(int move, bool is_enpassant, char captured) {
     Point from = get_from(move);
@@ -349,7 +353,7 @@ void TestBot::moves_pawn(Point at, std::vector<int>& moves) {
     }
 }
 
-void TestBot::jumpers(Point at, const std::vector<Point>& targets, std::vector<int>& moves) {
+void TestBot::jumpers(Point at, std::vector<Point>& targets, std::vector<int>& moves) {
     char color;
     if (piece_color(at,'w')) {
         //white piece
@@ -358,7 +362,7 @@ void TestBot::jumpers(Point at, const std::vector<Point>& targets, std::vector<i
         //black piece
         color = 'w';
     }
-    for (const auto& p : targets) {
+    for (auto& p : targets) {
         Point dest = at + p;
         if (!dest.in_bounds()) continue;
         if (empty_square(dest) || piece_color(dest,color)) {
@@ -367,7 +371,7 @@ void TestBot::jumpers(Point at, const std::vector<Point>& targets, std::vector<i
     }
 }
 
-void TestBot::riders(Point at, const std::vector<Point>& directions, std::vector<int>& moves) {
+void TestBot::riders(Point at, std::vector<Point>& directions, std::vector<int>& moves) {
     char color;
     if (piece_color(at,'w')) {
         //white piece
@@ -376,7 +380,7 @@ void TestBot::riders(Point at, const std::vector<Point>& directions, std::vector
         //black piece
         color = 'w';
     }
-    for (const auto& p : directions) {
+    for (auto& p : directions) {
         Point dest = at;
         while (true) {
             dest = dest + p;
