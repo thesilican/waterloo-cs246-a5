@@ -284,8 +284,7 @@ bool TestBot::empty_square(Point at) {
     return (board[at.x][at.y] == '*');
 }
 
-std::vector<int> TestBot::moves_pawn(Point at) {
-    std::vector<int> moves;
+void TestBot::moves_pawn(Point at, std::vector<int>& moves) {
     int promo, t, one_up, start, ep;
     char color, queen, knight;
     if (board[at.x][at.y] == 'P') {
@@ -326,7 +325,7 @@ std::vector<int> TestBot::moves_pawn(Point at) {
             moves.push_back(get_move(at,right,queen));
             moves.push_back(get_move(at,right,knight));
         }
-        return moves;
+        return;
     }
     Point oneup_square{at.x, at.y + one_up};
     Point twoup_square{at.x, at.y + 2*one_up};
@@ -348,10 +347,9 @@ std::vector<int> TestBot::moves_pawn(Point at) {
             moves.push_back(get_move(at,right,'*'));
         }
     }
-    return moves;
 }
 
-std::vector<int> TestBot::jumpers(Point at, const std::vector<Point>& targets) {
+void TestBot::jumpers(Point at, const std::vector<Point>& targets, std::vector<int>& moves) {
     char color;
     if (piece_color(at,'w')) {
         //white piece
@@ -360,7 +358,6 @@ std::vector<int> TestBot::jumpers(Point at, const std::vector<Point>& targets) {
         //black piece
         color = 'w';
     }
-    std::vector<int> moves;
     for (const auto& p : targets) {
         Point dest = at + p;
         if (!dest.in_bounds()) continue;
@@ -368,10 +365,9 @@ std::vector<int> TestBot::jumpers(Point at, const std::vector<Point>& targets) {
             moves.push_back(get_move(at,dest,'*'));
         }
     }
-    return moves;
 }
 
-std::vector<int> TestBot::riders(Point at, const std::vector<Point>& directions) {
+void TestBot::riders(Point at, const std::vector<Point>& directions, std::vector<int>& moves) {
     char color;
     if (piece_color(at,'w')) {
         //white piece
@@ -380,7 +376,6 @@ std::vector<int> TestBot::riders(Point at, const std::vector<Point>& directions)
         //black piece
         color = 'w';
     }
-    std::vector<int> moves;
     for (const auto& p : directions) {
         Point dest = at;
         while (true) {
@@ -396,11 +391,10 @@ std::vector<int> TestBot::riders(Point at, const std::vector<Point>& directions)
             }
         }
     }
-    return moves;
 }
 
 // need new function for castle_moves that comes prechecked to ensure king isn't under check due to move
-std::vector<int> TestBot::moves_king(Point at) {
+void TestBot::moves_king(Point at, std::vector<int>& moves) {
     std::vector<Point> targets = {Point(1,1),
                             Point(0,1),
                             Point(-1,1),
@@ -409,11 +403,11 @@ std::vector<int> TestBot::moves_king(Point at) {
                             Point(0,-1),
                             Point(1,-1),
                             Point(1,0)};
-    return jumpers(at,targets);
+    jumpers(at,targets,moves);
 }
 
 //returns legal castling moves for king at "at"
-std::vector<int> TestBot::moves_castle(Point at) {
+void TestBot::moves_castle(Point at, std::vector<int>& moves) {
     int arr_index, row;
     bool black;
     if (board[at.x][at.y] == 'K') {
@@ -425,7 +419,6 @@ std::vector<int> TestBot::moves_castle(Point at) {
         row = 7;
         black = true;
     }
-    std::vector<int> moves;
     for (int k = 0; k < 2; k++) {
         int bw_start, bw_end, start, end;
         if (k == 0) {
@@ -470,10 +463,9 @@ std::vector<int> TestBot::moves_castle(Point at) {
             }
         }
     }
-    return moves;
 }
 
-std::vector<int> TestBot::moves_knight(Point at) {
+void TestBot::moves_knight(Point at, std::vector<int>& moves) {
     std::vector<Point> targets = {Point(2,1),
                             Point(1,2),
                             Point(-1,2),
@@ -482,27 +474,27 @@ std::vector<int> TestBot::moves_knight(Point at) {
                             Point(-1,-2),
                             Point(1,-2),
                             Point(2,-1)};
-    return jumpers(at, targets);
+    jumpers(at, targets, moves);
 }
 
-std::vector<int> TestBot::moves_rook(Point at) {
+void TestBot::moves_rook(Point at, std::vector<int>& moves) {
     std::vector<Point> directions = {Point(1,0),
                                 Point(0,1),
                                 Point(0,-1),
                                 Point(-1,0)};
-    return riders(at, directions);
+    riders(at, directions, moves);
 }
 
-std::vector<int> TestBot::moves_bishop(Point at) {
+void TestBot::moves_bishop(Point at, std::vector<int>& moves) {
     std::vector<Point> directions = {Point(1,1),
                                 Point(-1,1),
                                 Point(-1,-1),
                                 Point(1,-1)};
-    return riders(at, directions);
+    riders(at, directions, moves);
 }
 //get rid of std::move for copy elision
 
-std::vector<int> TestBot::moves_queen(Point at) {
+void TestBot::moves_queen(Point at, std::vector<int>& moves) {
     std::vector<Point> directions = {Point(1,1),
                                 Point(-1,1),
                                 Point(-1,-1),
@@ -511,17 +503,17 @@ std::vector<int> TestBot::moves_queen(Point at) {
                                 Point(0,1),
                                 Point(0,-1),
                                 Point(-1,0)};
-    return riders(at, directions);
+    riders(at, directions, moves);
 }
 
-std::vector<int> TestBot::moves_general(Point at) {
+void TestBot::moves_general(Point at, std::vector<int>& moves) {
     char piece = board[at.x][at.y];
-    if (piece == 'P' || piece == 'p') return moves_pawn(at);
-    if (piece == 'R' || piece == 'r') return moves_rook(at);
-    if (piece == 'N' || piece == 'n') return moves_knight(at);
-    if (piece == 'B' || piece == 'b') return moves_bishop(at);
-    if (piece == 'Q' || piece == 'q') return moves_queen(at);
-    return moves_king(at);
+    if (piece == 'P' || piece == 'p') {moves_pawn(at,moves); return;}
+    if (piece == 'R' || piece == 'r') {moves_rook(at,moves); return;}
+    if (piece == 'N' || piece == 'n') {moves_knight(at,moves); return;}
+    if (piece == 'B' || piece == 'b') {moves_bishop(at,moves); return;}
+    if (piece == 'Q' || piece == 'q') {moves_queen(at,moves); return;}
+    moves_king(at,moves);
 }
 
 //check if given color's king is under check
@@ -532,15 +524,18 @@ bool TestBot::is_check(bool black) {
     } else {
         color = 'b';
     }
+    std::vector<int> moves;
+    int first = 0;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             Point pos{i,j};
             if (!empty_square(pos) && piece_color(pos,color)) {
-                std::vector<int> moves = moves_general(pos);
-                for (auto m : moves) {
-                    Point to = get_to(m);
+                moves_general(pos,moves);
+                for (int c = first; c < moves.size(); c++) {
+                    Point to = get_to(moves[c]);
                     if (board[to.x][to.y] == 'K' || board[to.x][to.y] == 'k') return true;
                 }
+                first = moves.size();
             }
         }
     }
@@ -548,25 +543,22 @@ bool TestBot::is_check(bool black) {
 }
 
 //maybe need to construct all moves vector in one go instead of combining multiple vectors??
-std::vector<int> TestBot::all_moves() {
+void TestBot::all_moves(std::vector<int>& moves) {
     char color;
     if (black_turn) {
         color = 'b';
     } else {
         color = 'w';
     }
-    std::vector<int> moves;
-    //moves.reserve(80);
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             Point pos{i,j};
             if (!empty_square(pos) && piece_color(pos,color)) {
-                std::vector<int> more_moves = moves_general(pos);
-                for (auto e : more_moves) moves.push_back(e);
+                moves_general(pos,moves);
             }
+            //ignored castling for efficiency (mobilization only weighted 0.1)
         }
     }
-    return moves;
 }
 
 void TestBot::is_proper_move(int m, std::vector<int>& moves) {
@@ -587,7 +579,7 @@ void TestBot::is_proper_move(int m, std::vector<int>& moves) {
     undo_move(m,ep,captured);
 }
 
-std::vector<int> TestBot::legal_moves() {
+void TestBot::legal_moves(std::vector<int>& final_moves) {
     char color;
     if (black_turn) {
         color = 'b';
@@ -595,7 +587,7 @@ std::vector<int> TestBot::legal_moves() {
         color = 'w';
     }
     std::vector<int> moves;
-    //moves.reserve(80);
+    int first = 0;
     bool old_castling[4];
     bool old_enpassant[8];
     std::copy(std::begin(castling), std::end(castling), std::begin(old_castling));
@@ -604,18 +596,17 @@ std::vector<int> TestBot::legal_moves() {
         for (int j = 0; j < 8; j++) {
             Point pos{i,j};
             if (!empty_square(pos) && piece_color(pos,color)) {
-                std::vector<int> more_moves = moves_general(pos);
-                for (auto m : more_moves) is_proper_move(m,moves);
+                moves_general(pos,moves);
+                for (int c = first; c < moves.size(); c++) is_proper_move(moves[c],final_moves);
+                first = moves.size();
                 if (board[pos.x][pos.y] == 'K' || board[pos.x][pos.y] == 'k') {
-                    std::vector<int> castle_moves = moves_castle(pos);
-                    for (auto m : castle_moves) moves.push_back(m);
+                    moves_castle(pos,final_moves);
                 }
             }
         }
     }
     std::copy(std::begin(old_castling), std::end(old_castling), std::begin(castling));
     std::copy(std::begin(old_enpassant), std::end(old_enpassant), std::begin(en_passant_good));
-    return moves;
 }
 
 //maybe lower penalties for doubled and isolated pawns
@@ -627,7 +618,9 @@ int TestBot::evaluate(int depth) {
         turn = 1;
     }
     int ev = 0;
-    int cur_player_legalmoves_size = all_moves().size();
+    std::vector<int> moves;
+    all_moves(moves);
+    int cur_player_legalmoves_size = moves.size();
     //if current player's king is in check
     if (is_check(black_turn)) {
         if (cur_player_legalmoves_size == 0) {
@@ -655,9 +648,14 @@ int TestBot::evaluate(int depth) {
     std::copy(std::begin(en_passant_good), std::end(en_passant_good), std::begin(old_ep));
     for (int i = 0; i < 8; i++) en_passant_good[i] = false;
     if (black_turn) {
-        black_mob = all_moves().size();
+        std::vector<int> other_moves;
+        all_moves(other_moves);
+        black_mob = other_moves.size();
+        
     } else {
-        white_mob = all_moves().size();
+        std::vector<int> other_moves;
+        all_moves(other_moves);
+        white_mob = other_moves.size();
     }
     std::copy(std::begin(old_ep), std::end(old_ep), std::begin(en_passant_good));
     black_turn = !black_turn;
@@ -705,7 +703,8 @@ Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
     if (depth == 0) {
         return Eval{0, evaluate(0)};
     }
-    std::vector<int> moves = legal_moves();
+    std::vector<int> moves;
+    legal_moves(moves); //maybe change to all_moves??
     //have already checked for checkmate in legal_moves though??
     if (moves.size() == 0 && is_check(black_turn)) return Eval{0,-10000-depth};
     if (moves.size() == 0) return Eval{0,0};

@@ -26,7 +26,8 @@ void test_gen_moves_bot(std::string fen) {
     Board board(fen);
     // print legal moves (one on each line)
     TestBot tb(board);
-    std::vector<int> moves = tb.legal_moves();
+    std::vector<int> moves;
+    tb.legal_moves(moves);
     for (auto m : moves) {
         Move mo = tb.uncompress_move(m);
         std::cout << mo.uci() << '\n';

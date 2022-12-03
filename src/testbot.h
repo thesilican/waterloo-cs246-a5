@@ -54,7 +54,6 @@ class TestBot {
     void init_board_debug();
     bool piece_color(Point at, char color);
     bool empty_square(Point at);
-    void copy_array(bool from[], bool to[], int size);
     TestBot();
     TestBot(Board& b);
     Board get_board_object();
@@ -65,22 +64,22 @@ class TestBot {
     //captured is '*' if no piece was captured
     void undo_move(int move, bool is_enpassant, char captured);
     //gives list of moves (follows movement rules, doesn't put king in check)
-    std::vector<int> legal_moves();
-    std::vector<int> all_moves();
+    void legal_moves(std::vector<int>& final_moves);
+    void all_moves(std::vector<int>& moves);
     void is_proper_move(int move, std::vector<int>& moves);
     
     //helpers for the above. each one assumes moving piece is of correct color
     //they also don't check if the moves put friendly king at check
-    std::vector<int> jumpers(Point at, const std::vector<Point>& targets);
-    std::vector<int> riders(Point at, const std::vector<Point>& directions);
-    std::vector<int> moves_pawn(Point at);
-    std::vector<int> moves_rook(Point at);
-    std::vector<int> moves_bishop(Point at);
-    std::vector<int> moves_knight(Point at);
-    std::vector<int> moves_queen(Point at);
-    std::vector<int> moves_king(Point at);
-    std::vector<int> moves_general(Point at);
-    std::vector<int> moves_castle(Point at);
+    void jumpers(Point at, const std::vector<Point>& targets, std::vector<int>& moves);
+    void riders(Point at, const std::vector<Point>& directions, std::vector<int>& moves);
+    void moves_pawn(Point at, std::vector<int>& moves);
+    void moves_rook(Point at, std::vector<int>& moves);
+    void moves_bishop(Point at, std::vector<int>& moves);
+    void moves_knight(Point at, std::vector<int>& moves);
+    void moves_queen(Point at, std::vector<int>& moves);
+    void moves_king(Point at, std::vector<int>& moves);
+    void moves_general(Point at, std::vector<int>& moves);
+    void moves_castle(Point at, std::vector<int>& moves);
     bool is_check(bool black);
 };
 
