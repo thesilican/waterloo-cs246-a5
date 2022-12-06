@@ -1,9 +1,9 @@
 #include "testbot.h"
-#include <iostream>
-#include <vector>
-#include <memory>
 #include <cctype>
+#include <iostream>
 #include <iterator>
+#include <memory>
+#include <vector>
 
 TestBot::TestBot() {
     int_form['P'] = 0;
@@ -35,11 +35,11 @@ TestBot::TestBot() {
     char_form[12] = '*';
 }
 
-TestBot::TestBot(Board& b) : TestBot() {
+TestBot::TestBot(Board &b) : TestBot() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Point p{i,j};
-            std::unique_ptr<Piece>& ptr = b.get(p);
+            Point p{i, j};
+            std::unique_ptr<Piece> &ptr = b.get(p);
             if (ptr != nullptr) {
                 board[i][j] = ptr->to_char();
             } else {
@@ -65,7 +65,7 @@ TestBot::TestBot(Board& b) : TestBot() {
     }
 }
 
-Board TestBot::get_board_object() {
+Board TestBot::to_board() {
     std::unique_ptr<Piece> pieces[8][8];
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -77,7 +77,7 @@ Board TestBot::get_board_object() {
         }
     }
     Player to_move = (black_turn) ? Player::Black : Player::White;
-    Point ep{-1,-1};
+    Point ep{-1, -1};
     for (int i = 0; i < 8; i++) {
         if (en_passant_good[i]) {
             ep.x = i;
@@ -90,7 +90,7 @@ Board TestBot::get_board_object() {
     new_castle[1] = castling[0];
     new_castle[2] = castling[3];
     new_castle[3] = castling[2];
-    return Board{pieces,to_move,new_castle,ep,0,1};
+    return Board{pieces, to_move, new_castle, ep, 0, 1};
 }
 
 Move TestBot::uncompress_move(int m) {
@@ -99,9 +99,9 @@ Move TestBot::uncompress_move(int m) {
     char p = get_promote(m);
     if (p != '*') {
         PieceType pr = piece_type_from_char(tolower(p));
-        return Move{from,to,pr};
+        return Move{from, to, pr};
     }
-    return Move{from,to};
+    return Move{from, to};
 }
 
 int TestBot::compress_move(Move m) {
@@ -109,10 +109,10 @@ int TestBot::compress_move(Move m) {
         return get_move(m.from, m.to, '*');
     }
     char p = piece_type_to_char(m.promotes_to);
-    if (piece_color(m.from,'w')) {
+    if (piece_color(m.from, 'w')) {
         p = toupper(p);
     }
-    return get_move(m.from,m.to,p);
+    return get_move(m.from, m.to, p);
 }
 
 int TestBot::get_move(Point from, Point to, char promote) {
@@ -133,17 +133,17 @@ Point TestBot::get_from(int move) {
     move = (move >> 10);
     int y = (move & ((1 << 3) - 1));
     move = (move >> 3);
-    return Point(move,y);
+    return Point(move, y);
 }
 
 Point TestBot::get_to(int move) {
     move = (move >> 4);
     int y = (move & ((1 << 3) - 1));
     move = ((move >> 3) & ((1 << 3) - 1));
-    return Point(move,y);
+    return Point(move, y);
 }
 
-//maybe need en passant and castling ints (bit manip)??
+// maybe need en passant and castling ints (bit manip)??
 void TestBot::move(int move) {
     black_turn = !black_turn;
     Point from = get_from(move);
@@ -151,7 +151,7 @@ void TestBot::move(int move) {
     char pr = get_promote(move);
     char piece = board[from.x][from.y];
 
-    //update castling array
+    // update castling array
     if (castling[0] == 1) {
         if (piece == 'K' || (piece == 'R' && from.x == 0)) {
             castling[0] = 0;
@@ -173,49 +173,51 @@ void TestBot::move(int move) {
         }
     }
 
-    //update en passant array
+    // update en passant array
     for (int i = 0; i < 8; i++) {
         en_passant_good[i] = false;
     }
     if (piece == 'p' && from.y == 6 && to.y == 4) {
         Point left{to.x - 1, to.y};
         Point right{to.x + 1, to.y};
-        if ((left.in_bounds() && (board[left.x][left.y] == 'P')) || (right.in_bounds() && (board[right.x][right.y] == 'P'))) {
+        if ((left.in_bounds() && (board[left.x][left.y] == 'P')) ||
+            (right.in_bounds() && (board[right.x][right.y] == 'P'))) {
             en_passant_good[to.x] = true;
         }
     } else if (piece == 'P' && from.y == 1 && to.y == 3) {
         Point left{to.x - 1, to.y};
         Point right{to.x + 1, to.y};
-        if ((left.in_bounds() && (board[left.x][left.y] == 'p')) || (right.in_bounds() && (board[right.x][right.y] == 'p'))) {
+        if ((left.in_bounds() && (board[left.x][left.y] == 'p')) ||
+            (right.in_bounds() && (board[right.x][right.y] == 'p'))) {
             en_passant_good[to.x] = true;
-        }        
+        }
     }
 
-    //update board
+    // update board
     if (piece == 'p' || piece == 'P') {
         if (from.x != to.x && board[to.x][to.y] == '*') {
-            //en passant
+            // en passant
             board[from.x][from.y] = '*';
             board[to.x][to.y] = piece;
             board[to.x][from.y] = '*';
             return;
         } else if (to.y == 7 || to.y == 0) {
-            //pawn promotion
+            // pawn promotion
             board[from.x][from.y] = '*';
             board[to.x][to.y] = pr;
             return;
         }
     } else if (piece == 'k' || piece == 'K') {
         if (from.x - to.x == 2 || from.x - to.x == -2) {
-            //castling
+            // castling
             if (from.x - to.x == 2) {
-                //queen side
+                // queen side
                 board[from.x][from.y] = '*';
                 board[to.x][to.y] = piece;
                 board[3][to.y] = board[0][to.y];
                 board[0][to.y] = '*';
             } else {
-                //king side
+                // king side
                 board[from.x][from.y] = '*';
                 board[to.x][to.y] = piece;
                 board[5][to.y] = board[7][to.y];
@@ -223,16 +225,16 @@ void TestBot::move(int move) {
             }
             return;
         }
-    } 
+    }
     board[from.x][from.y] = '*';
     board[to.x][to.y] = piece;
 }
 
-//list of things to test
+// list of things to test
 //- use a move class
 //- use a board class and copy it
 
-//doesn't undo castling and enpassant info
+// doesn't undo castling and enpassant info
 void TestBot::undo_move(int move, bool is_enpassant, char captured) {
     Point from = get_from(move);
     Point to = get_to(move);
@@ -249,7 +251,7 @@ void TestBot::undo_move(int move, bool is_enpassant, char captured) {
     }
     black_turn = !black_turn;
     if ((piece == 'K' || piece == 'k') && (from.x - to.x == 2)) {
-        //queen side castle
+        // queen side castle
         board[to.x][to.y] = '*';
         board[from.x][from.y] = piece;
         board[0][to.y] = board[3][to.y];
@@ -257,15 +259,15 @@ void TestBot::undo_move(int move, bool is_enpassant, char captured) {
         return;
     }
     if ((piece == 'K' || piece == 'k') && (from.x - to.x == -2)) {
-        //king side castle
+        // king side castle
         board[to.x][to.y] = '*';
         board[from.x][from.y] = piece;
         board[7][to.y] = board[5][to.y];
-        board[5][to.y] = '*';        
+        board[5][to.y] = '*';
         return;
     }
     if (is_enpassant) {
-        //en passant
+        // en passant
         board[to.x][to.y] = '*';
         board[from.x][from.y] = piece;
         board[to.x][from.y] = captured;
@@ -275,12 +277,13 @@ void TestBot::undo_move(int move, bool is_enpassant, char captured) {
     board[from.x][from.y] = piece;
 }
 
-//color is 'b' or 'w', returns whether piece at "at" is of that color
+// color is 'b' or 'w', returns whether piece at "at" is of that color
 bool TestBot::piece_color(Point at, char color) {
     if (color == 'b') {
-        return ((int_form[board[at.x][at.y]] >= 6) && (int_form[board[at.x][at.y]] <= 11));
+        return ((int_form[board[at.x][at.y]] >= 6) &&
+                (int_form[board[at.x][at.y]] <= 11));
     } else {
-        return (int_form[board[at.x][at.y]] < 6);   
+        return (int_form[board[at.x][at.y]] < 6);
     }
 }
 
@@ -288,11 +291,11 @@ bool TestBot::empty_square(Point at) {
     return (board[at.x][at.y] == '*');
 }
 
-void TestBot::moves_pawn(Point at, std::vector<int>& moves) {
+void TestBot::moves_pawn(Point at, std::vector<int> &moves) {
     int promo, t, one_up, start, ep;
     char color, queen, knight;
     if (board[at.x][at.y] == 'P') {
-        //white pawn
+        // white pawn
         promo = 6;
         t = 7;
         color = 'b';
@@ -302,7 +305,7 @@ void TestBot::moves_pawn(Point at, std::vector<int>& moves) {
         queen = 'Q';
         knight = 'N';
     } else {
-        //black pawn
+        // black pawn
         promo = 1;
         t = 0;
         color = 'w';
@@ -313,82 +316,89 @@ void TestBot::moves_pawn(Point at, std::vector<int>& moves) {
         knight = 'n';
     }
     if (at.y == promo) {
-        //pawn promotion
+        // pawn promotion
         Point top{at.x, t};
         if (empty_square(top)) {
-            moves.push_back(get_move(at,top,queen));
-            moves.push_back(get_move(at,top,knight));
+            moves.push_back(get_move(at, top, queen));
+            moves.push_back(get_move(at, top, knight));
         }
         Point left{at.x - 1, t};
         Point right{at.x + 1, t};
-        if (left.in_bounds() && piece_color(left,color)) {
-            moves.push_back(get_move(at,left,queen));
-            moves.push_back(get_move(at,left,knight));
+        if (left.in_bounds() && piece_color(left, color)) {
+            moves.push_back(get_move(at, left, queen));
+            moves.push_back(get_move(at, left, knight));
         }
-        if (right.in_bounds() && piece_color(right,color)) {
-            moves.push_back(get_move(at,right,queen));
-            moves.push_back(get_move(at,right,knight));
+        if (right.in_bounds() && piece_color(right, color)) {
+            moves.push_back(get_move(at, right, queen));
+            moves.push_back(get_move(at, right, knight));
         }
         return;
     }
     Point oneup_square{at.x, at.y + one_up};
-    Point twoup_square{at.x, at.y + 2*one_up};
+    Point twoup_square{at.x, at.y + 2 * one_up};
     if (empty_square(oneup_square)) {
-        moves.push_back(get_move(at,oneup_square,'*'));
+        moves.push_back(get_move(at, oneup_square, '*'));
     }
-    if ((at.y == start) && empty_square(oneup_square) && empty_square(twoup_square)) {
-        moves.push_back(get_move(at,twoup_square,'*'));
+    if ((at.y == start) && empty_square(oneup_square) &&
+        empty_square(twoup_square)) {
+        moves.push_back(get_move(at, twoup_square, '*'));
     }
     Point left{at.x - 1, at.y + one_up};
     Point right{at.x + 1, at.y + one_up};
     if (left.in_bounds()) {
-        if (piece_color(left,color) || ((at.y == ep) && en_passant_good[left.x])) {
-            moves.push_back(get_move(at,left,'*'));
+        if (piece_color(left, color) ||
+            ((at.y == ep) && en_passant_good[left.x])) {
+            moves.push_back(get_move(at, left, '*'));
         }
     }
     if (right.in_bounds()) {
-        if (piece_color(right,color) || ((at.y == ep) && en_passant_good[right.x])) {
-            moves.push_back(get_move(at,right,'*'));
+        if (piece_color(right, color) ||
+            ((at.y == ep) && en_passant_good[right.x])) {
+            moves.push_back(get_move(at, right, '*'));
         }
     }
 }
 
-void TestBot::jumpers(Point at, std::vector<Point>& targets, std::vector<int>& moves) {
+void TestBot::jumpers(Point at, std::vector<Point> &targets,
+                      std::vector<int> &moves) {
     char color;
-    if (piece_color(at,'w')) {
-        //white piece
+    if (piece_color(at, 'w')) {
+        // white piece
         color = 'b';
     } else {
-        //black piece
+        // black piece
         color = 'w';
     }
-    for (auto& p : targets) {
+    for (auto &p : targets) {
         Point dest = at + p;
-        if (!dest.in_bounds()) continue;
-        if (empty_square(dest) || piece_color(dest,color)) {
-            moves.push_back(get_move(at,dest,'*'));
+        if (!dest.in_bounds())
+            continue;
+        if (empty_square(dest) || piece_color(dest, color)) {
+            moves.push_back(get_move(at, dest, '*'));
         }
     }
 }
 
-void TestBot::riders(Point at, std::vector<Point>& directions, std::vector<int>& moves) {
+void TestBot::riders(Point at, std::vector<Point> &directions,
+                     std::vector<int> &moves) {
     char color;
-    if (piece_color(at,'w')) {
-        //white piece
+    if (piece_color(at, 'w')) {
+        // white piece
         color = 'b';
     } else {
-        //black piece
+        // black piece
         color = 'w';
     }
-    for (auto& p : directions) {
+    for (auto &p : directions) {
         Point dest = at;
         while (true) {
             dest = dest + p;
-            if (!dest.in_bounds()) break;
+            if (!dest.in_bounds())
+                break;
             if (empty_square(dest)) {
-                moves.push_back(get_move(at,dest,'*'));
-            } else if (piece_color(dest,color)) {
-                moves.push_back(get_move(at,dest,'*'));
+                moves.push_back(get_move(at, dest, '*'));
+            } else if (piece_color(dest, color)) {
+                moves.push_back(get_move(at, dest, '*'));
                 break;
             } else {
                 break;
@@ -397,21 +407,17 @@ void TestBot::riders(Point at, std::vector<Point>& directions, std::vector<int>&
     }
 }
 
-// need new function for castle_moves that comes prechecked to ensure king isn't under check due to move
-void TestBot::moves_king(Point at, std::vector<int>& moves) {
-    std::vector<Point> targets = {Point(1,1),
-                            Point(0,1),
-                            Point(-1,1),
-                            Point(-1,0),
-                            Point(-1,-1),
-                            Point(0,-1),
-                            Point(1,-1),
-                            Point(1,0)};
-    jumpers(at,targets,moves);
+// need new function for castle_moves that comes prechecked to ensure king isn't
+// under check due to move
+void TestBot::moves_king(Point at, std::vector<int> &moves) {
+    std::vector<Point> targets = {Point(1, 1),  Point(0, 1),   Point(-1, 1),
+                                  Point(-1, 0), Point(-1, -1), Point(0, -1),
+                                  Point(1, -1), Point(1, 0)};
+    jumpers(at, targets, moves);
 }
 
-//returns legal castling moves for king at "at"
-void TestBot::moves_castle(Point at, std::vector<int>& moves) {
+// returns legal castling moves for king at "at"
+void TestBot::moves_castle(Point at, std::vector<int> &moves) {
     int arr_index, row;
     bool black;
     if (board[at.x][at.y] == 'K') {
@@ -436,10 +442,10 @@ void TestBot::moves_castle(Point at, std::vector<int>& moves) {
             start = 6;
             end = 4;
         }
-        if (castling[k+arr_index]) {
+        if (castling[k + arr_index]) {
             bool legal = true;
             for (int i = bw_start; i <= bw_end; i++) {
-                if (!empty_square(Point(i,row))) {
+                if (!empty_square(Point(i, row))) {
                     legal = false;
                     break;
                 }
@@ -447,80 +453,95 @@ void TestBot::moves_castle(Point at, std::vector<int>& moves) {
             if (legal) {
                 bool old_castling[4];
                 bool old_enpassant[8];
-                std::copy(std::begin(castling), std::end(castling), std::begin(old_castling));
-                std::copy(std::begin(en_passant_good), std::end(en_passant_good), std::begin(old_enpassant));
+                for (int i = 0; i < 4; i++) {
+                    old_castling[i] = castling[i];
+                }
+                for (int i = 0; i < 8; i++) {
+                    old_enpassant[i] = en_passant_good[i];
+                }
                 for (int i = start; i >= end; i--) {
-                    int m = get_move(at,Point(i,row),'*');
+                    int m = get_move(at, Point(i, row), '*');
                     move(m);
                     if (is_check(black)) {
                         legal = false;
-                        undo_move(m,false,'*');
+                        undo_move(m, false, '*');
+                        for (int i = 0; i < 4; i++) {
+                            castling[i] = old_castling[i];
+                        }
+                        for (int i = 0; i < 8; i++) {
+                            en_passant_good[i] = old_enpassant[i];
+                        }
                         break;
                     }
-                    undo_move(m,false,'*');
+                    undo_move(m, false, '*');
+                    for (int i = 0; i < 4; i++) {
+                        castling[i] = old_castling[i];
+                    }
+                    for (int i = 0; i < 8; i++) {
+                        en_passant_good[i] = old_enpassant[i];
+                    }
                 }
-                std::copy(std::begin(old_castling), std::end(old_castling), std::begin(castling));
-                std::copy(std::begin(old_enpassant), std::end(old_enpassant), std::begin(en_passant_good));
             }
             if (legal) {
-                moves.push_back(get_move(at,Point(bw_start+1,row),'*'));
+                moves.push_back(get_move(at, Point(bw_start + 1, row), '*'));
             }
         }
     }
 }
 
-void TestBot::moves_knight(Point at, std::vector<int>& moves) {
-    std::vector<Point> targets = {Point(2,1),
-                            Point(1,2),
-                            Point(-1,2),
-                            Point(-2,1),
-                            Point(-2,-1),
-                            Point(-1,-2),
-                            Point(1,-2),
-                            Point(2,-1)};
+void TestBot::moves_knight(Point at, std::vector<int> &moves) {
+    std::vector<Point> targets = {Point(2, 1),  Point(1, 2),   Point(-1, 2),
+                                  Point(-2, 1), Point(-2, -1), Point(-1, -2),
+                                  Point(1, -2), Point(2, -1)};
     jumpers(at, targets, moves);
 }
 
-void TestBot::moves_rook(Point at, std::vector<int>& moves) {
-    std::vector<Point> directions = {Point(1,0),
-                                Point(0,1),
-                                Point(0,-1),
-                                Point(-1,0)};
+void TestBot::moves_rook(Point at, std::vector<int> &moves) {
+    std::vector<Point> directions = {Point(1, 0), Point(0, 1), Point(0, -1),
+                                     Point(-1, 0)};
     riders(at, directions, moves);
 }
 
-void TestBot::moves_bishop(Point at, std::vector<int>& moves) {
-    std::vector<Point> directions = {Point(1,1),
-                                Point(-1,1),
-                                Point(-1,-1),
-                                Point(1,-1)};
+void TestBot::moves_bishop(Point at, std::vector<int> &moves) {
+    std::vector<Point> directions = {Point(1, 1), Point(-1, 1), Point(-1, -1),
+                                     Point(1, -1)};
     riders(at, directions, moves);
 }
-//get rid of std::move for copy elision
+// get rid of std::move for copy elision
 
-void TestBot::moves_queen(Point at, std::vector<int>& moves) {
-    std::vector<Point> directions = {Point(1,1),
-                                Point(-1,1),
-                                Point(-1,-1),
-                                Point(1,-1),
-                                Point(1,0),
-                                Point(0,1),
-                                Point(0,-1),
-                                Point(-1,0)};
+void TestBot::moves_queen(Point at, std::vector<int> &moves) {
+    std::vector<Point> directions = {Point(1, 1),  Point(-1, 1), Point(-1, -1),
+                                     Point(1, -1), Point(1, 0),  Point(0, 1),
+                                     Point(0, -1), Point(-1, 0)};
     riders(at, directions, moves);
 }
 
-void TestBot::moves_general(Point at, std::vector<int>& moves) {
+void TestBot::moves_general(Point at, std::vector<int> &moves) {
     char piece = board[at.x][at.y];
-    if (piece == 'P' || piece == 'p') {moves_pawn(at,moves); return;}
-    if (piece == 'R' || piece == 'r') {moves_rook(at,moves); return;}
-    if (piece == 'N' || piece == 'n') {moves_knight(at,moves); return;}
-    if (piece == 'B' || piece == 'b') {moves_bishop(at,moves); return;}
-    if (piece == 'Q' || piece == 'q') {moves_queen(at,moves); return;}
-    moves_king(at,moves);
+    if (piece == 'P' || piece == 'p') {
+        moves_pawn(at, moves);
+        return;
+    }
+    if (piece == 'R' || piece == 'r') {
+        moves_rook(at, moves);
+        return;
+    }
+    if (piece == 'N' || piece == 'n') {
+        moves_knight(at, moves);
+        return;
+    }
+    if (piece == 'B' || piece == 'b') {
+        moves_bishop(at, moves);
+        return;
+    }
+    if (piece == 'Q' || piece == 'q') {
+        moves_queen(at, moves);
+        return;
+    }
+    moves_king(at, moves);
 }
 
-//check if given color's king is under check
+// check if given color's king is under check
 bool TestBot::is_check(bool black) {
     char color;
     if (black) {
@@ -532,12 +553,13 @@ bool TestBot::is_check(bool black) {
     int first = 0;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Point pos{i,j};
-            if (!empty_square(pos) && piece_color(pos,color)) {
-                moves_general(pos,moves);
+            Point pos{i, j};
+            if (!empty_square(pos) && piece_color(pos, color)) {
+                moves_general(pos, moves);
                 for (int c = first; c < moves.size(); c++) {
                     Point to = get_to(moves[c]);
-                    if (board[to.x][to.y] == 'K' || board[to.x][to.y] == 'k') return true;
+                    if (board[to.x][to.y] == 'K' || board[to.x][to.y] == 'k')
+                        return true;
                 }
                 first = moves.size();
             }
@@ -546,8 +568,9 @@ bool TestBot::is_check(bool black) {
     return false;
 }
 
-//maybe need to construct all moves vector in one go instead of combining multiple vectors??
-void TestBot::all_moves(std::vector<int>& moves) {
+// maybe need to construct all moves vector in one go instead of combining
+// multiple vectors??
+void TestBot::all_moves(std::vector<int> &moves) {
     char color;
     if (black_turn) {
         color = 'b';
@@ -556,16 +579,16 @@ void TestBot::all_moves(std::vector<int>& moves) {
     }
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Point pos{i,j};
-            if (!empty_square(pos) && piece_color(pos,color)) {
-                moves_general(pos,moves);
+            Point pos{i, j};
+            if (!empty_square(pos) && piece_color(pos, color)) {
+                moves_general(pos, moves);
             }
-            //ignored castling for efficiency (mobilization only weighted 0.1)
+            // ignored castling for efficiency (mobilization only weighted 0.1)
         }
     }
 }
 
-void TestBot::is_proper_move(int m, std::vector<int>& moves) {
+void TestBot::is_proper_move(int m, std::vector<int> &moves) {
     Point to = get_to(m);
     Point from = get_from(m);
     char captured = board[to.x][to.y];
@@ -576,14 +599,28 @@ void TestBot::is_proper_move(int m, std::vector<int>& moves) {
             captured = board[to.x][from.y];
         }
     }
+    bool old_castling[4];
+    bool old_enpassant[8];
+    for (int i = 0; i < 4; i++) {
+        old_castling[i] = castling[i];
+    }
+    for (int i = 0; i < 8; i++) {
+        old_enpassant[i] = en_passant_good[i];
+    }
     move(m);
     if (!is_check(!black_turn)) {
         moves.push_back(m);
     }
-    undo_move(m,ep,captured);
+    for (int i = 0; i < 4; i++) {
+        castling[i] = old_castling[i];
+    }
+    for (int i = 0; i < 8; i++) {
+        en_passant_good[i] = old_enpassant[i];
+    }
+    undo_move(m, ep, captured);
 }
 
-void TestBot::legal_moves(std::vector<int>& final_moves) {
+void TestBot::legal_moves(std::vector<int> &final_moves) {
     char color;
     if (black_turn) {
         color = 'b';
@@ -592,28 +629,23 @@ void TestBot::legal_moves(std::vector<int>& final_moves) {
     }
     std::vector<int> moves;
     int first = 0;
-    bool old_castling[4];
-    bool old_enpassant[8];
-    std::copy(std::begin(castling), std::end(castling), std::begin(old_castling));
-    std::copy(std::begin(en_passant_good), std::end(en_passant_good), std::begin(old_enpassant));
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Point pos{i,j};
-            if (!empty_square(pos) && piece_color(pos,color)) {
-                moves_general(pos,moves);
-                for (int c = first; c < moves.size(); c++) is_proper_move(moves[c],final_moves);
+            Point pos{i, j};
+            if (!empty_square(pos) && piece_color(pos, color)) {
+                moves_general(pos, moves);
+                for (int c = first; c < moves.size(); c++)
+                    is_proper_move(moves[c], final_moves);
                 first = moves.size();
                 if (board[pos.x][pos.y] == 'K' || board[pos.x][pos.y] == 'k') {
-                    moves_castle(pos,final_moves);
+                    moves_castle(pos, final_moves);
                 }
             }
         }
     }
-    std::copy(std::begin(old_castling), std::end(old_castling), std::begin(castling));
-    std::copy(std::begin(old_enpassant), std::end(old_enpassant), std::begin(en_passant_good));
 }
 
-//maybe lower penalties for doubled and isolated pawns
+// maybe lower penalties for doubled and isolated pawns
 int TestBot::evaluate(int depth) {
     int turn;
     if (black_turn) {
@@ -625,22 +657,23 @@ int TestBot::evaluate(int depth) {
     std::vector<int> moves;
     all_moves(moves);
     int cur_player_legalmoves_size = moves.size();
-    //if current player's king is in check
+    // if current player's king is in check
     if (is_check(black_turn)) {
         if (cur_player_legalmoves_size == 0) {
-            //current player is checkmated.
-            //return very low value MINUS depth so bot prefers earlier checkmates.
+            // current player is checkmated.
+            // return very low value MINUS depth so bot prefers earlier
+            // checkmates.
             return -10000 - depth;
         } else {
             ev -= 50;
         }
     }
-    //stalemate
+    // stalemate
     if (cur_player_legalmoves_size == 0) {
-        return 0; //stalemate should be neutral evaluation
+        return 0; // stalemate should be neutral evaluation
     }
 
-    //difference in mobilization
+    // difference in mobilization
     int black_mob, white_mob;
     if (black_turn) {
         black_mob = cur_player_legalmoves_size;
@@ -649,27 +682,33 @@ int TestBot::evaluate(int depth) {
     }
     black_turn = !black_turn;
     bool old_ep[8];
-    std::copy(std::begin(en_passant_good), std::end(en_passant_good), std::begin(old_ep));
-    for (int i = 0; i < 8; i++) en_passant_good[i] = false;
+    for (int i = 0; i < 8; i++) {
+        old_ep[i] = en_passant_good[i];
+    }
+    for (int i = 0; i < 8; i++)
+        en_passant_good[i] = false;
     if (black_turn) {
         std::vector<int> other_moves;
         all_moves(other_moves);
         black_mob = other_moves.size();
-        
+
     } else {
         std::vector<int> other_moves;
         all_moves(other_moves);
         white_mob = other_moves.size();
     }
-    std::copy(std::begin(old_ep), std::end(old_ep), std::begin(en_passant_good));
+    for (int i = 0; i < 8; i++) {
+        en_passant_good[i] = old_ep[i];
+    }
     black_turn = !black_turn;
-    ev += turn*(white_mob - black_mob);
+    ev += turn * (white_mob - black_mob);
 
-    //difference in piece counts
-    std::unordered_map<char,int> counts;
+    // difference in piece counts
+    std::unordered_map<char, int> counts;
     int white_pawns[8];
     int black_pawns[8];
-    int white_blocked = 0, black_blocked = 0, white_doubled = 0, black_doubled = 0, white_isolated = 0, black_isolated = 0;
+    int white_blocked = 0, black_blocked = 0, white_doubled = 0,
+        black_doubled = 0, white_isolated = 0, black_isolated = 0;
     for (int i = 0; i < 8; i++) {
         white_pawns[i] = 0;
         black_pawns[i] = 0;
@@ -679,27 +718,41 @@ int TestBot::evaluate(int depth) {
             if (board[i][j] == 'p') {
                 black_pawns[i]++;
                 counts['p']++;
-                if (board[i][j-1] != '*') black_blocked++;
+                if (board[i][j - 1] != '*')
+                    black_blocked++;
             } else if (board[i][j] == 'P') {
                 white_pawns[i]++;
                 counts['P']++;
-                if (board[i][j+1] != '*') white_blocked++;
+                if (board[i][j + 1] != '*')
+                    white_blocked++;
             } else {
                 counts[board[i][j]]++;
             }
         }
     }
     for (int i = 0; i < 8; i++) {
-        if (white_pawns[i] > 1) {white_doubled += white_pawns[i];}
-        if (black_pawns[i] > 1) {black_doubled += black_pawns[i];}
-        if (white_pawns[i] > 0 && (i > 0 && white_pawns[i-1] == 0) && (i < 7 && white_pawns[i+1] == 0)) {white_isolated += white_pawns[i];}
-        if (black_pawns[i] > 0 && (i > 0 && black_pawns[i-1] == 0) && (i < 7 && black_pawns[i+1] == 0)) {black_isolated += black_pawns[i];}
+        if (white_pawns[i] > 1) {
+            white_doubled += white_pawns[i];
+        }
+        if (black_pawns[i] > 1) {
+            black_doubled += black_pawns[i];
+        }
+        if (white_pawns[i] > 0 && (i > 0 && white_pawns[i - 1] == 0) &&
+            (i < 7 && white_pawns[i + 1] == 0)) {
+            white_isolated += white_pawns[i];
+        }
+        if (black_pawns[i] > 0 && (i > 0 && black_pawns[i - 1] == 0) &&
+            (i < 7 && black_pawns[i + 1] == 0)) {
+            black_isolated += black_pawns[i];
+        }
     }
-    ev -= turn*5*(white_doubled - black_doubled + white_blocked - black_blocked + white_isolated - black_isolated);
-    ev += turn*90*(counts['Q'] - counts['q']);
-    ev += turn*50*(counts['R'] - counts['r']);
-    ev += turn*30*(counts['B'] - counts['b'] + counts['N'] - counts['n']);
-    ev += turn*10*(counts['P'] - counts['p']);
+    ev -= turn * 5 *
+          (white_doubled - black_doubled + white_blocked - black_blocked +
+           white_isolated - black_isolated);
+    ev += turn * 90 * (counts['Q'] - counts['q']);
+    ev += turn * 50 * (counts['R'] - counts['r']);
+    ev += turn * 30 * (counts['B'] - counts['b'] + counts['N'] - counts['n']);
+    ev += turn * 10 * (counts['P'] - counts['p']);
     return ev;
 }
 
@@ -708,10 +761,12 @@ Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
         return Eval{0, evaluate(0)};
     }
     std::vector<int> moves;
-    legal_moves(moves); //maybe change to all_moves??
-    //have already checked for checkmate in legal_moves though??
-    if (moves.size() == 0 && is_check(black_turn)) return Eval{0,-10000-depth};
-    if (moves.size() == 0) return Eval{0,0};
+    legal_moves(moves); // maybe change to all_moves??
+    // have already checked for checkmate in legal_moves though??
+    if (moves.size() == 0 && is_check(black_turn))
+        return Eval{0, -10000 - depth};
+    if (moves.size() == 0)
+        return Eval{0, 0};
 
     int best_move;
     Point to, from;
@@ -720,8 +775,12 @@ Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
     bool old_ep[8];
     bool old_castle[4];
     for (auto i : moves) {
-        std::copy(std::begin(castling), std::end(castling), std::begin(old_castle));
-        std::copy(std::begin(en_passant_good), std::end(en_passant_good), std::begin(old_ep));
+        for (int i = 0; i < 4; i++) {
+            old_castle[i] = castling[i];
+        }
+        for (int i = 0; i < 8; i++) {
+            old_ep[i] = en_passant_good[i];
+        }
         to = get_to(i);
         from = get_from(i);
         captured = board[to.x][to.y];
@@ -733,11 +792,15 @@ Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
             }
         }
         move(i);
-        Eval p = alpha_beta(-beta, -alpha, depth-1);
+        Eval p = alpha_beta(-beta, -alpha, depth - 1);
         p.ev = -(p.ev);
         undo_move(i, ep, captured);
-        std::copy(std::begin(old_castle), std::end(old_castle), std::begin(castling));
-        std::copy(std::begin(old_ep), std::end(old_ep), std::begin(en_passant_good));
+        for (int i = 0; i < 4; i++) {
+            castling[i] = old_castle[i];
+        }
+        for (int i = 0; i < 8; i++) {
+            en_passant_good[i] = old_ep[i];
+        }
         if (p.ev >= beta) {
             return Eval{0, beta};
         }
@@ -746,7 +809,7 @@ Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
             best_move = i;
         }
     }
-    return Eval{best_move,alpha};
+    return Eval{best_move, alpha};
 }
 
 void TestBot::print_board_debug() {
@@ -758,7 +821,8 @@ void TestBot::print_board_debug() {
         std::cout << '\n';
     }
     std::cout << "  ";
-    for (int i = 0; i < 8; i++) std::cout << i;
+    for (int i = 0; i < 8; i++)
+        std::cout << i;
     std::cout << '\n';
 }
 
@@ -782,17 +846,29 @@ void TestBot::init_board_debug() {
     //         board[j][i] = '*';
     //     }
     // }
-    char new_board[8][8] = {{'*','p','*','*','*','*','P','*'},
-                            {'*','p','*','*','*','*','P','*'},
-                            {'*','p','*','*','*','*','P','*'},
-                            {'*','p','*','*','*','*','P','*'},
-                            {'*','p','k','*','*','K','P','*'},
-                            {'*','p','*','*','*','*','P','*'},
-                            {'*','p','*','*','*','*','P','*'},
-                            {'*','p','*','*','*','*','P','*'}};
+    char new_board[8][8] = {{'*', 'p', '*', '*', '*', '*', 'P', '*'},
+                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
+                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
+                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
+                            {'*', 'p', 'k', '*', '*', 'K', 'P', '*'},
+                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
+                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
+                            {'*', 'p', '*', '*', '*', '*', 'P', '*'}};
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             board[i][j] = new_board[i][j];
         }
     }
+}
+
+bool TestBot::is_checkmate() {
+    std::vector<int> moves;
+    legal_moves(moves);
+    return moves.size() == 0 && is_check(black_turn);
+}
+
+bool TestBot::is_stalemate() {
+    std::vector<int> moves;
+    legal_moves(moves);
+    return moves.size() == 0 && !is_check(black_turn);
 }

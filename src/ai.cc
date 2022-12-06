@@ -28,7 +28,7 @@ Move SlightlyCompetentBot::best_move(Game &game) {
     for (auto m : moves) {
         Board b = game.board.clone();
         b.make_move(m);
-        if (b.in_check()) {
+        if (b.is_check()) {
             return m;
         }
     }
@@ -56,7 +56,7 @@ Move AverageCsStudentBot::best_move(Game &game) {
     for (auto m : moves) {
         Board b = game.board.clone();
         b.make_move(m);
-        if (b.in_check()) {
+        if (b.is_check()) {
             return m;
         }
     }

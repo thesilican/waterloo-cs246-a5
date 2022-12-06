@@ -100,7 +100,7 @@ std::vector<Move> Board::legal_moves() {
     return legal_moves;
 }
 
-bool Board::in_check() {
+bool Board::is_check() {
     Board board = this->clone();
     board.en_passent_square = Point(-1, -1);
     board.to_move = to_move == Player::White ? Player::Black : Player::White;
@@ -116,11 +116,11 @@ bool Board::in_check() {
 }
 
 bool Board::is_checkmate() {
-    return legal_moves().size() == 0 && in_check();
+    return legal_moves().size() == 0 && is_check();
 }
 
 bool Board::is_stalemate() {
-    return legal_moves().size() == 0 && !in_check();
+    return legal_moves().size() == 0 && !is_check();
 }
 
 void Board::make_move(Move m) {

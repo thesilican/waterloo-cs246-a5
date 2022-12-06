@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
         } else if (argc == 4 && std::string(argv[2]) == "checks-state") {
             test_checks_state(std::string(argv[3]));
         } else if (argc == 4 && std::string(argv[2]) == "checks-state-bot") {
-            test_checks_state(std::string(argv[3]));
+            test_checks_state_bot(std::string(argv[3]));
         } else {
             throw std::runtime_error("error parsing test flags");
         }

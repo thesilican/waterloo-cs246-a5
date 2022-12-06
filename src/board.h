@@ -46,7 +46,7 @@ class Board {
     // Generates a list of all possible legal moves for a board
     std::vector<Move> legal_moves();
     // Whether or not the current player is in check
-    bool in_check();
+    bool is_check();
     // Whether or not the current player is in checkmate
     bool is_checkmate();
     // Whether or not the current player is in stalemate
