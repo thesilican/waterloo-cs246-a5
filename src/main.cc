@@ -8,6 +8,7 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
+    // Parse test flags
     if (argc >= 2 && std::string(argv[1]) == "--test") {
         if (argc == 2) {
             test_run();
@@ -28,10 +29,20 @@ int main(int argc, char *argv[]) {
         }
         return 0;
     }
+    
+    // Parse additional command line flags
+    bool debug = false, unicode = false;
+    for (int i = 1; i < argc; i++) {
+        if (std::string(argv[i]) == "--unicode") {
+            unicode = true;
+        } else if (std::string(argv[i]) == "--debug") {
+            debug = true;
+        }
+    }
 
     Controller c;
     GraphicsUi g(c);
-    TextUi t(c, true);
+    TextUi t(c, unicode, debug);
     c.command_loop();
 
     return 0;
