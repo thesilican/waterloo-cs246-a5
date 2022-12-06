@@ -101,7 +101,7 @@ void TextUi::notify(Controller &controller) {
     } else if (controller.game.board.is_stalemate()) {
         // stalemate
         std::cout << "Stalemate!\n";
-    } else if (controller.game.board.in_check()) {
+    } else if (controller.game.board.is_check()) {
         if (controller.game.board.to_move == Player::Black) {
             // black in check
             std::cout << "Black is in check.\n";

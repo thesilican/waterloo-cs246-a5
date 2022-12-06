@@ -28,7 +28,7 @@ Move SlightlyCompetentBot::best_move(Game &game) {
     for (auto m : moves) {
         Board b = game.board.clone();
         b.make_move(m);
-        if (b.in_check()) {
+        if (b.is_check()) {
             return m;
         }
     }
@@ -56,7 +56,7 @@ Move AverageCsStudentBot::best_move(Game &game) {
     for (auto m : moves) {
         Board b = game.board.clone();
         b.make_move(m);
-        if (b.in_check()) {
+        if (b.is_check()) {
             return m;
         }
     }
@@ -87,41 +87,4 @@ Move AverageCsStudentBot::best_move(Game &game) {
     }
     int idx = dist(mt) % best.size();
     return best[idx];
-}
-
-Move ChuckNorrisBot::best_move(Game &game) {
-    std::vector<Move> moves = game.board.legal_moves();
-    if (moves.size() == 0) {
-        throw NoMovesException();
-    }
-    for (auto m : moves) {
-        Board b = game.board.clone();
-        b.make_move(m);
-        if (b.is_checkmate()) {
-            return m;
-        }
-    }
-    int best_score = INT_MIN;
-    std::vector<Move> best_moves{moves[0]};
-    for (auto move : moves) {
-        int count = 0;
-        Board board = game.board.clone();
-        board.make_move(move);
-        count -= board.legal_moves().size();
-        board.to_move = game.board.to_move;
-        for (int i = 0; i < 4; i++) {
-            board.can_castle[i] = false;
-        }
-        board.en_passent_square = Point(-1, -1);
-        count += board.legal_moves().size();
-        if (count == best_score) {
-            best_moves.push_back(move);
-        } else if (count > best_score) {
-            best_moves.clear();
-            best_moves.push_back(move);
-            best_score = count;
-        }
-    }
-    int idx = dist(mt) % best_moves.size();
-    return best_moves[idx];
 }

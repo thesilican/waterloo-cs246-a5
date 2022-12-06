@@ -4,8 +4,7 @@
 #include "game.h"
 #include "observer.h"
 #include "setup.h"
-#include "testbot.h"
-#include <cctype>
+#include "chucknorrisbot.h"
 class Setup;
 class Game;
 class Subject;

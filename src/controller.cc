@@ -124,14 +124,15 @@ void Controller::run_game() {
         bool success = false;
         static std::regex move_regex = std::regex(
             "^(?:move\\s+)?([a-h][1-8])\\s*([a-h][1-8])\\s*([nbrq]|)");
-        static std::regex move_san_regex =
-            std::regex("^(?:move\\s+)?([0O]-[0O](?:-[0O])|[nbrqkNBRQK]?[a-h]?["
-                       "1-8]?x?[a-h][1-8](?:=?[nbrqNBRQ])?))");
+        static std::regex move_san_regex = std::regex(
+            "^(?:move\\s+)?([0oO]-[0oO](?:-[0oO])?|[nbrqkNBRQK]?[a-h]?["
+            "1-8]?x?[a-h][1-8](?:=?[nbrqNBRQ])?)");
         if (std::regex_match(line, result, move_regex)) {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot != nullptr) {
                 std::cout << "Expected bot move" << std::endl;
+                continue;
             }
             auto iter = ++result.begin();
             std::string from_str = *(iter++);
@@ -149,6 +150,7 @@ void Controller::run_game() {
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot != nullptr) {
                 std::cout << "Expected bot move" << std::endl;
+                continue;
             }
             auto iter = ++result.begin();
             std::string san_str = *(iter++);
@@ -156,14 +158,15 @@ void Controller::run_game() {
                 Move move(san_str, game.board);
                 game.make_move(move);
                 success = true;
-            } catch (...) {
-                std::cout << "Invalid move" << std::endl;
+            } catch (std::exception &e) {
+                std::cout << "Invalid move: " << e.what() << std::endl;
             }
         } else if (line == "move" || line == "") {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot == nullptr) {
                 std::cout << "Expected human move" << std::endl;
+                continue;
             }
             std::cout << "Bot is thinking..." << std::endl;
             Move move = bot->best_move(game);
@@ -175,7 +178,7 @@ void Controller::run_game() {
                 }
             }
             if (found == false) {
-                std::cout << "Bot made an illegal move: " << move.uci()
+                std::cout << "Warning! Bot made an illegal move: " << move.uci()
                           << std::endl;
             } else {
                 game.make_move(move);

@@ -93,7 +93,7 @@ void GraphicsUi::notify(Controller& controller) {
     } else if (controller.game.board.is_stalemate()) {
         // stalemate
         win.drawImage(0, 500, TEXT_STALEMATE);  
-    } else if (controller.game.board.in_check()) {
+    } else if (controller.game.board.is_check()) {
         if (controller.game.board.to_move == Player::Black) {
             // black in check
             win.drawImage(0, 500, TEXT_BLACK_CHECK);  

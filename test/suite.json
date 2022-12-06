@@ -15,6 +15,7 @@
   "Basic Castling 2": "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b KQkq - 0 1",
   "Castling Through Check 1": "3rkr2/8/8/8/8/8/PPP1P1PP/R3K2R w KQ - 0 1",
   "Castling Through Check 2": "r3k2r/8/4N3/8/8/8/8/4K3 b kq - 0 1",
+  "Castling In Check" : "4k3/4r3/8/8/8/8/PPPP1PPP/R3K2R w KQ - 0 1",
   "Pawn Movement 1": "8/8/8/2pPkp1q/2P1P1P1/1P6/P7/4K3 w - c6 0 1",
   "Pawn Movement 2": "8/pp4k1/2p5/8/3p1ppP/2R1R3/1K6/8 b - h3 0 1",
   "Pawn Promotion 1": "8/PPPPPPPP/4K3/8/8/4k3/pppppppp/8 w - - 0 1",

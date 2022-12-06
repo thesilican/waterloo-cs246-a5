@@ -70,7 +70,7 @@ std::vector<Move> Board::legal_moves() {
             }
         }
 
-        // Check for castling through check
+        // Check for castling in/through check
         int br = white ? 0 : 7;
         if (move.from == Point(4, br) && get(move.from) != nullptr &&
             get(move.from)->piece_type() == PieceType::King &&
@@ -86,7 +86,7 @@ std::vector<Move> Board::legal_moves() {
             board.make_move(Move(move.from, middle));
             std::vector<Move> child_moves = board.possible_moves();
             for (auto cmove : child_moves) {
-                if (cmove.to == middle) {
+                if (cmove.to == middle || cmove.to == Point(4, br)) {
                     legal = false;
                     break;
                 }
@@ -100,7 +100,7 @@ std::vector<Move> Board::legal_moves() {
     return legal_moves;
 }
 
-bool Board::in_check() {
+bool Board::is_check() {
     Board board = this->clone();
     board.en_passent_square = Point(-1, -1);
     board.to_move = to_move == Player::White ? Player::Black : Player::White;
@@ -116,11 +116,11 @@ bool Board::in_check() {
 }
 
 bool Board::is_checkmate() {
-    return legal_moves().size() == 0 && in_check();
+    return legal_moves().size() == 0 && is_check();
 }
 
 bool Board::is_stalemate() {
-    return legal_moves().size() == 0 && !in_check();
+    return legal_moves().size() == 0 && !is_check();
 }
 
 void Board::make_move(Move m) {
@@ -143,8 +143,7 @@ void Board::make_move(Move m) {
 
     // Handle en passent capture
     if (piece == PieceType::Pawn && m.to == en_passent_square) {
-        Point behind = white ? Point(0, -1) : Point(0, 1);
-        get(m.to + behind) = nullptr;
+        get(Point(m.to.x, m.from.y)) = nullptr;
     }
 
     // Handle castling
@@ -169,7 +168,7 @@ void Board::make_move(Move m) {
         Point r = ep + Point(-1, 0);
         if ((l.in_bounds() && get(l) != nullptr && get(l)->player != to_move) ||
             (r.in_bounds() && get(r) != nullptr && get(r)->player != to_move)) {
-            en_passent_square = ep;
+            en_passent_square = ep + (white ? Point(0, -1) : Point(0, 1));
         } else {
             en_passent_square = Point(-1, -1);
         }
