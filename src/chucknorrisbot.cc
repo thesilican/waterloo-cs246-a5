@@ -812,55 +812,6 @@ Eval ChuckNorrisBot::alpha_beta(int alpha, int beta, int depth) {
     return Eval{best_move, alpha};
 }
 
-void ChuckNorrisBot::print_board_debug() {
-    for (int i = 7; i >= 0; i--) {
-        std::cout << i << " ";
-        for (int j = 0; j < 8; j++) {
-            std::cout << board[j][i];
-        }
-        std::cout << '\n';
-    }
-    std::cout << "  ";
-    for (int i = 0; i < 8; i++)
-        std::cout << i;
-    std::cout << '\n';
-}
-
-void ChuckNorrisBot::init_board_debug() {
-    // board[0][0] = board[7][0] = 'R';
-    // board[1][0] = board[6][0] = 'N';
-    // board[2][0] = board[5][0] = 'B';
-    // board[3][0] = 'Q';
-    // board[4][0] = 'K';
-    // board[0][7] = board[7][7] = 'r';
-    // board[1][7] = board[6][7] = 'n';
-    // board[2][7] = board[5][7] = 'b';
-    // board[3][7] = 'q';
-    // board[4][7] = 'k';
-    // for (int i = 0; i < 8; i++) {
-    //     board[i][1] = 'P';
-    //     board[i][6] = 'p';
-    // }
-    // for (int i = 2; i < 6; i++) {
-    //     for (int j = 0; j < 8; j++) {
-    //         board[j][i] = '*';
-    //     }
-    // }
-    char new_board[8][8] = {{'*', 'p', '*', '*', '*', '*', 'P', '*'},
-                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
-                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
-                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
-                            {'*', 'p', 'k', '*', '*', 'K', 'P', '*'},
-                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
-                            {'*', 'p', '*', '*', '*', '*', 'P', '*'},
-                            {'*', 'p', '*', '*', '*', '*', 'P', '*'}};
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            board[i][j] = new_board[i][j];
-        }
-    }
-}
-
 bool ChuckNorrisBot::is_checkmate() {
     std::vector<int> moves;
     legal_moves(moves);
@@ -876,6 +827,6 @@ bool ChuckNorrisBot::is_stalemate() {
 Move ChuckNorrisBot::best_move(Game &game) {
     *this = ChuckNorrisBot(game.board);
     std::vector<int> moves;
-    auto res = alpha_beta(-100000, 100000, 3);
+    auto res = alpha_beta(-100000, 100000, 4);
     return uncompress_move(res.move);
 }

@@ -65,8 +65,6 @@ class ChuckNorrisBot : public Bot {
     Point get_from(int move);
     Point get_to(int move);
     char get_promote(int move);
-    void print_board_debug();
-    void init_board_debug();
     bool piece_color(Point at, char color);
     bool empty_square(Point at);
     void all_moves(std::vector<int> &moves);
