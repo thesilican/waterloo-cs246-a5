@@ -40,18 +40,32 @@ void test_apply_move_bot(std::string fen, std::string uci) {
     // print board fen
     TestBot tb(board);
     int m = tb.compress_move(move);
-    // std::cout << "INFO " << tb.get_from(m).x << " " << tb.get_from(m).y << " " << tb.get_to(m).x << " " << tb.get_to(m).y << " " << tb.get_promote(m) << '\n';
-    // char fuckyou;
-    // if (move.promotes_to == PieceType::Queen) {
+    // std::cout << "INFO " << tb.get_from(m).x << " " << tb.get_from(m).y << "
+    // " << tb.get_to(m).x << " " << tb.get_to(m).y << " " << tb.get_promote(m)
+    // << '\n'; char fuckyou; if (move.promotes_to == PieceType::Queen) {
     //     fuckyou = 'q';
     // } else if (move.promotes_to == PieceType::Knight) {
     //     fuckyou = 'n';
     // } else {
     //     fuckyou = 'B';
     // }
-    
-    // std::cout << "MORE INFO " << move.has_promotes_to << " " << fuckyou << '\n';
+
+    // std::cout << "MORE INFO " << move.has_promotes_to << " " << fuckyou <<
+    // '\n';
     tb.move(m);
     Board new_board = tb.get_board_object();
     std::cout << new_board.fen() << '\n';
+}
+
+void test_checks_state(std::string fen) {
+    Board board(fen);
+    if (board.is_checkmate()) {
+        std::cout << "checkmate" << std::endl;
+    } else if (board.is_stalemate()) {
+        std::cout << "stalemate" << std::endl;
+    } else if (board.in_check()) {
+        std::cout << "check" << std::endl;
+    } else {
+        std::cout << "none" << std::endl;
+    }
 }
