@@ -52,10 +52,10 @@ void Controller::run_setup() {
                 std::cout << "Illegal pawn placement!\n";
                 continue;
             }
-            if (!game.board.in_check()) {
+            if (!game.board.is_check()) {
                 Board c = game.board.clone();
                 c.to_move = (c.to_move == Player::Black) ? Player::White : Player::Black;
-                if (c.in_check()) {
+                if (c.is_check()) {
                     std::cout << "No kings can be in check!\n";
                     continue;
                 }
