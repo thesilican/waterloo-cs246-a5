@@ -10,7 +10,7 @@ class Xwindow;
 class Controller;
 
 class GraphicsUi : public Observer {
-    Xwindow win;
+    Xwindow win{500,560};
     void display_game(Game& game);
     PixelImg& get_image(std::unique_ptr<Piece>& p);
     char board[8][8];

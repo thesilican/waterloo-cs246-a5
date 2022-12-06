@@ -80,4 +80,32 @@ void TextUi::print_game(Game &game) {
 
 void TextUi::notify(Controller &controller) {
     print_game(controller.game);
+    if (controller.game.resigned) {
+        if (controller.game.board.to_move == Player::Black) {
+            // black resigned
+            std::cout << "White wins!\n";
+        } else {
+            // white resigned
+            std::cout << "Black wins!\n";
+        }
+    } else if (controller.game.board.is_checkmate()) {
+        if (controller.game.board.to_move == Player::Black) {
+            // black in checkmate
+            std::cout << "Checkmate! White wins!\n";           
+        } else {
+            // white in checkmate
+            std::cout << "Checkmate! Black wins!\n";   
+        }
+    } else if (controller.game.board.is_stalemate()) {
+        // stalemate
+        std::cout << "Stalemate!\n"; 
+    } else if (controller.game.board.in_check()) {
+        if (controller.game.board.to_move == Player::Black) {
+            // black in check
+            std::cout << "Black is in check.\n"; 
+        } else {
+            // white in check
+            std::cout << "White is in check.\n";  
+        }
+    }
 }

@@ -73,4 +73,32 @@ void GraphicsUi::display_game(Game& game) {
 
 void GraphicsUi::notify(Controller& controller) {
     display_game(controller.game);
+    if (controller.game.resigned) {
+        if (controller.game.board.to_move == Player::Black) {
+            // black resigned
+            win.drawImage(0, 500, TEXT_WHITE_WINS);
+        } else {
+            // white resigned
+            win.drawImage(0, 500, TEXT_BLACK_WINS);
+        }
+    } else if (controller.game.board.is_checkmate()) {
+        if (controller.game.board.to_move == Player::Black) {
+            // black in checkmate
+            win.drawImage(0, 500, TEXT_WHITE_CHECKMATE);           
+        } else {
+            // white in checkmate
+            win.drawImage(0, 500, TEXT_BLACK_CHECKMATE);  
+        }
+    } else if (controller.game.board.is_stalemate()) {
+        // stalemate
+        win.drawImage(0, 500, TEXT_STALEMATE);  
+    } else if (controller.game.board.in_check()) {
+        if (controller.game.board.to_move == Player::Black) {
+            // black in check
+            win.drawImage(0, 500, TEXT_BLACK_CHECK);  
+        } else {
+            // white in check
+            win.drawImage(0, 500, TEXT_WHITE_CHECK);  
+        }
+    }
 }

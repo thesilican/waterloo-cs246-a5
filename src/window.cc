@@ -42,10 +42,6 @@ Xwindow::Xwindow(int width, int height) {
         height;
     hints.width = hints.base_width = hints.min_width = hints.max_width = width;
     XSetNormalHints(d, w, &hints);
-    
-    // Make font not crappy
-    Font f = XLoadFont(d, "lucidasans-24");
-    XSetFont(d, gc, f);
 
     // Make sure we don't race against the Window being shown
     XEvent ev;
