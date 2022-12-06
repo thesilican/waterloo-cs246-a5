@@ -19,5 +19,12 @@ extern PixelImg BLACK_ROOK;
 extern PixelImg WHITE_ROOK;
 extern PixelImg ORANGE_SQUARE;
 extern PixelImg YELLOW_SQUARE;
+extern PixelImg TEXT_BLACK_CHECK;
+extern PixelImg TEXT_BLACK_CHECKMATE;
+extern PixelImg TEXT_BLACK_WINS;
+extern PixelImg TEXT_WHITE_CHECK;
+extern PixelImg TEXT_WHITE_CHECKMATE;
+extern PixelImg TEXT_WHITE_WINS;
+extern PixelImg TEXT_STALEMATE;
 
 #endif
