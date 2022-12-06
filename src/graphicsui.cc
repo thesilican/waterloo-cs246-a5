@@ -102,4 +102,5 @@ void GraphicsUi::notify(Controller& controller) {
             win.drawImage(0, 500, TEXT_WHITE_CHECK);  
         }
     }
+    win.flush();
 }
