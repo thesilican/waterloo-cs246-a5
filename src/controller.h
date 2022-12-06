@@ -4,18 +4,10 @@
 #include "observer.h"
 #include "setup.h"
 #include "testbot.h"
+#include "ai.h"
 class Setup;
 class Game;
 class Subject;
-
-enum class ControllerState {
-    Setup,
-    InProgress,
-    WhiteWin,
-    BlackWin,
-    Draw,
-    Finished
-};
 
 class Controller : public Subject {
     void run_setup();
@@ -26,9 +18,11 @@ class Controller : public Subject {
   public:
     Controller();
 
+    std::unique_ptr<Bot> white_bot;
+    std::unique_ptr<Bot> black_bot;
+
     Setup setup;
     Game game;
-    ControllerState state;
     int white_wins;
     int black_wins;
     int draws;

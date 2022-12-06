@@ -1,10 +1,32 @@
 #include "controller.h"
+#include "ai.h"
 #include "debug.h"
 #include <iostream>
+#include <regex>
+
+std::unique_ptr<Bot> bot_from_string(std::string s) {
+    if (s == "human") {
+        return nullptr;
+    } else if (s == "computer1") {
+        return std::unique_ptr<Bot>(new BumblingBuffoonBot());
+    } else if (s == "computer2") {
+        return std::unique_ptr<Bot>(new SlightlyCompetentBot());
+    } else if (s == "computer3") {
+        return std::unique_ptr<Bot>(new AverageCsStudentBot());
+    } else if (s == "computer4") {
+        return std::unique_ptr<Bot>(new ChuckNorrisBot());
+    } else {
+        throw std::runtime_error("invalid playe type string: " + s);
+    }
+}
+
+bool prompt(std::string &line) {
+    std::cout << "> ";
+    return !std::getline(std::cin, line).fail();
+}
 
 Controller::Controller()
-    : setup(), game(), state(ControllerState::Setup), white_wins(0),
-      black_wins(0), draws(0) {
+    : setup(), game(), white_wins(0), black_wins(0), draws(0) {
 }
 
 void Controller::run_setup() {
@@ -12,7 +34,62 @@ void Controller::run_setup() {
 }
 
 void Controller::run_game() {
-    throw std::runtime_error("not implemented");
+    game = setup.finish();
+
+    notify_observers(*this);
+
+    std::string line;
+    std::smatch result;
+    while (prompt(line)) {
+        bool success = false;
+        static std::regex move_regex =
+            std::regex("^move\\s+([a-h][1-8])\\s*([a-h][1-8])\\s*([nbrq]|)");
+        if (std::regex_match(line, result, move_regex)) {
+            auto iter = ++result.begin();
+            std::string from_str = *(iter++);
+            std::string to_str = *(iter++);
+            std::string promote_str = *(iter++);
+            try {
+                Point from(from_str);
+                Point to(to_str);
+                Move move(from, to);
+                if (promote_str != "") {
+                    PieceType piece = piece_type_from_char(promote_str[0]);
+                    move = Move(from, to, piece);
+                }
+                game.make_move(move);
+                success = true;
+            } catch (...) {
+                std::cout << "Invalid move" << std::endl;
+            }
+        } else if (line == "move") {
+            std::unique_ptr<Bot> &bot =
+                game.board.to_move == Player::White ? white_bot : black_bot;
+            if (bot == nullptr) {
+                std::cout << "Expected human move." << std::endl;
+            }
+            Move move = bot->best_move(game);
+            // Sanity check
+            bool found = false;
+            for (auto m : game.board.legal_moves()) {
+                if (m == move) {
+                    found = true;
+                }
+            }
+            if (found == false) {
+                throw std::runtime_error("bot made illegal move");
+            }
+
+            game.make_move(move);
+            success = true;
+        } else {
+            std::cout << "Invalid command" << std::endl;
+        }
+
+        if (success) {
+            notify_observers(*this);
+        }
+    }
 }
 
 void Controller::do_game_command(std::string command) {
@@ -20,34 +97,25 @@ void Controller::do_game_command(std::string command) {
 }
 
 void Controller::command_loop() {
-    game = Game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    // notify_observers(*this);
-    // for (auto move : game.board.legal_moves()) {
-    //     std::cout << move.uci() << std::endl;
-    // }
-    // game.make_move(Move("a2a4"));
-    // game.make_move(Move("e7e5"));
-    // game.make_move(Move("f1c4"));
-    // game.make_move(Move("f8c5"));
-    // game.make_move(Move("d1h5"));
-    // game.make_move(Move("g8f6"));
-    // game.make_move(Move("h5f7"));
+    std::cout << "Starting Chess Program" << std::endl;
 
-    TestBot t{game.board};
-    notify_observers(*this);
-    std::string l;
-    while (true) {
-        std::cin >> l;
-        Move m = t.uncompress_move(t.alpha_beta(-100000,100000,5).move);
-        game.make_move(m);
-        t.move(t.compress_move(m));
-        notify_observers(*this);
-        std::cin >> l;
-        Move first(l);
-        game.make_move(l);
-        t.move(t.compress_move(l));
-        notify_observers(*this);
-        
+    std::string line;
+    std::smatch result;
+    while (prompt(line)) {
+        static std::regex game_regex = std::regex(
+            "^game\\s+(human|computer[1-4])\\s+(human|computer[1-4])");
+        if (line == "setup") {
+            run_setup();
+        } else if (std::regex_match(line, result, game_regex)) {
+            auto iter = ++result.begin();
+            white_bot = bot_from_string(*(iter++));
+            black_bot = bot_from_string(*(iter++));
+            std::cout << "Starting game" << std::endl;
+            run_game();
+        } else {
+            std::cout << "Invalid command" << std::endl;
+        }
     }
-    getchar();
+    std::cout << "\n\nFinal Score:\nWhite: " << white_wins + (draws / 2)
+              << "\nBlack: " << black_wins + (draws / 2) << std::endl;
 }

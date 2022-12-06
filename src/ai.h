@@ -10,6 +10,7 @@ class Game;
 class Bot {
   public:
     virtual Move best_move(Game &game) = 0;
+    virtual ~Bot() = default;
 };
 
 class NoMovesException : public std::exception {
@@ -27,7 +28,7 @@ class BumblingBuffoonBot : public Bot {
     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
   public:
-    BumblingBuffoonBot();
+    BumblingBuffoonBot() = default;
     Move best_move(Game &game) override;
 };
 
@@ -51,11 +52,14 @@ class AverageCsStudentBot : public Bot {
     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
   public:
+    AverageCsStudentBot() = default;
     Move best_move(Game &game) override;
 };
 
 // Bot Level 4
 class ChuckNorrisBot : public Bot {
+  public:
+    ChuckNorrisBot() = default;
     Move best_move(Game &game) override;
 };
 
