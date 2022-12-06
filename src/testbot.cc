@@ -663,7 +663,7 @@ int TestBot::evaluate(int depth) {
     }
     std::copy(std::begin(old_ep), std::end(old_ep), std::begin(en_passant_good));
     black_turn = !black_turn;
-    ev += white_mob - black_mob;
+    ev += turn*(white_mob - black_mob);
 
     //difference in piece counts
     std::unordered_map<char,int> counts;
@@ -695,11 +695,11 @@ int TestBot::evaluate(int depth) {
         if (white_pawns[i] > 0 && (i > 0 && white_pawns[i-1] == 0) && (i < 7 && white_pawns[i+1] == 0)) {white_isolated += white_pawns[i];}
         if (black_pawns[i] > 0 && (i > 0 && black_pawns[i-1] == 0) && (i < 7 && black_pawns[i+1] == 0)) {black_isolated += black_pawns[i];}
     }
-    ev -= 5*(white_doubled - black_doubled + white_blocked - black_blocked + white_isolated - black_isolated);
-    ev += 90*(counts['Q'] - counts['q']);
-    ev += 50*(counts['R'] - counts['r']);
-    ev += 30*(counts['B'] - counts['b'] + counts['N'] - counts['n']);
-    ev += 10*(counts['P'] - counts['p']);
+    ev -= turn*5*(white_doubled - black_doubled + white_blocked - black_blocked + white_isolated - black_isolated);
+    ev += turn*90*(counts['Q'] - counts['q']);
+    ev += turn*50*(counts['R'] - counts['r']);
+    ev += turn*30*(counts['B'] - counts['b'] + counts['N'] - counts['n']);
+    ev += turn*10*(counts['P'] - counts['p']);
     return ev;
 }
 
