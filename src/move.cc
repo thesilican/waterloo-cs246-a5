@@ -30,7 +30,7 @@ Move::Move(std::string uci) {
 
 Move::Move(std::string san, Board &board) {
     static std::regex san_regex =
-        std::regex("^([0O]-[0O](?:-[0O])?)|([nbrqkNBRQK]?)([a-h]?)([1-8]?)(x?)("
+        std::regex("^([0oO]-[0oO](?:-[0oO])?)|([nbrqkNBRQK]?)([a-h]?)([1-8]?)(x?)("
                    "[a-h][1-8])(?:=?([nbrqNBRQ]))?$");
     std::smatch result;
     if (!std::regex_match(san, result, san_regex)) {
