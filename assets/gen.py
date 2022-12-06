@@ -18,10 +18,10 @@ files = [
     ("ORANGE_SQUARE", "orange-square.png"),
     ("YELLOW_SQUARE", "yellow-square.png"),
     ("TEXT_BLACK_CHECK", "text-black-check.png"),
-    ("TEXT_BLACK_CHECKMATE", "text-black-check.png"),
+    ("TEXT_BLACK_CHECKMATE", "text-black-checkmate.png"),
     ("TEXT_BLACK_WINS", "text-black-wins.png"),
     ("TEXT_WHITE_CHECK", "text-white-check.png"),
-    ("TEXT_WHITE_CHECKMATE", "text-white-check.png"),
+    ("TEXT_WHITE_CHECKMATE", "text-white-checkmate.png"),
     ("TEXT_WHITE_WINS", "text-white-wins.png"),
     ("TEXT_STALEMATE", "text-stalemate.png"),
 ]
