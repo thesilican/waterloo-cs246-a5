@@ -1,7 +1,7 @@
 #include "piece.h"
 #include "debug.h"
-#include <string>
 #include <stdexcept>
+#include <string>
 
 Player player_from_char(char c) {
     if (c == 'w') {
@@ -58,9 +58,6 @@ Piece::Piece(Player player) : player(player) {
 
 std::unique_ptr<Piece> Piece::clone() {
     return new_piece(piece_type(), player);
-}
-
-Piece::~Piece() {
 }
 
 void gen_jumper_moves(std::vector<Move> &moves, std::vector<Point> &dirs,
@@ -176,9 +173,9 @@ std::vector<Move> Pawn::possible_moves(Board &board, Point from) {
     // Capture moves (including en passent)
     Point cl = from + fwd + Point(-1, 0);
     bool cl_possible =
-        cl.in_bounds() && ((board.get(cl) != nullptr &&
-                            board.get(cl)->player != player) ||
-                           cl == board.en_passent_square);
+        cl.in_bounds() &&
+        ((board.get(cl) != nullptr && board.get(cl)->player != player) ||
+         cl == board.en_passent_square);
     if (cl_possible) {
         if (m1.y == (white ? 7 : 0)) {
             moves.push_back(Move(from, cl, PieceType::Queen));
@@ -191,9 +188,9 @@ std::vector<Move> Pawn::possible_moves(Board &board, Point from) {
     }
     Point cr = from + fwd + Point(1, 0);
     bool cr_possible =
-        cr.in_bounds() && ((board.get(cr) != nullptr &&
-                            board.get(cr)->player != player) ||
-                           cr == board.en_passent_square);
+        cr.in_bounds() &&
+        ((board.get(cr) != nullptr && board.get(cr)->player != player) ||
+         cr == board.en_passent_square);
     if (cr_possible) {
         if (m1.y == (white ? 7 : 0)) {
             moves.push_back(Move(from, cr, PieceType::Queen));

@@ -7,16 +7,23 @@
 class Move;
 class Game;
 
+// Abstract base class for a chess bot
 class Bot {
   public:
+    // Returns the best move for a given game state
     virtual Move best_move(Game &game) = 0;
+    // Virtual destructor
     virtual ~Bot() = default;
 };
 
+// Custom exception for when a bot cannot return a move
 class NoMovesException : public std::exception {
   public:
+    // Default constructor for the exception
     NoMovesException() = default;
+    // Virtual destructor
     virtual ~NoMovesException() throw() = default;
+    // Exception error message
     virtual const char *what() const throw();
 };
 

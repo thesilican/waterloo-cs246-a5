@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     Controller c;
     GraphicsUi g(c);
-    TextUi t(c);
+    TextUi t(c, true);
     c.command_loop();
 
     return 0;

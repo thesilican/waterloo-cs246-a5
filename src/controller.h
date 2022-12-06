@@ -1,31 +1,41 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
+#include "ai.h"
 #include "game.h"
 #include "observer.h"
 #include "setup.h"
 #include "testbot.h"
-#include "ai.h"
 class Setup;
 class Game;
 class Subject;
 
+// The main controller class for the program
+// Handles all commands
 class Controller : public Subject {
-    void run_setup();
-    // Text command loop for game
-    void run_game();
-    void do_game_command(std::string command);
-
-  public:
-    Controller();
-
+    // Chess setup object
+    Setup setup;
+    // The number of games that white has won
+    int white_wins;
+    // The number of games that black has won
+    int black_wins;
+    // The number of drawn games
+    int draws;
+    // The bot currently used by the white player (null for human player)
     std::unique_ptr<Bot> white_bot;
+    // The bot currently used by the black player (null for human player)
     std::unique_ptr<Bot> black_bot;
 
-    Setup setup;
+    // Command loop for setup
+    void run_setup();
+    // Command loop for gameplay
+    void run_game();
+
+  public:
+    // The current game state
     Game game;
-    int white_wins;
-    int black_wins;
-    int draws;
+
+    // Default constructor for the controller
+    Controller();
     // Outermost text command loop, can choose to setup or start game
     void command_loop();
 };

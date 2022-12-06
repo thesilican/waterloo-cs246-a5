@@ -6,12 +6,23 @@ class Observer;
 class Subject;
 class Controller;
 
+// Represents a text-based ui observer
 class TextUi : public Observer {
-  std::string square_char(std::unique_ptr<Piece> &piece);
-  void print_game(Game &game);
+    // Whether to render text using unicode chess pieces
+    bool use_unicode;
+    // Whether to print extra debug info like player to move,
+    // castling rights and en passent square
+    bool show_debug;
+
+    // Returns a character for a given piece or tile
+    std::string square_char(std::unique_ptr<Piece> &piece, Point p);
+    // Print a game object to the screen
+    void print_game(Game &game);
+
   public:
-    TextUi(Subject &s);
-    // outputs board or who wins or final score to text output
+    // Constructor for the TextUi
+    TextUi(Subject &s, bool use_unicode = false, bool show_debug = false);
+    // Notification function for the observer pattern
     void notify(Controller &controller) override;
 };
 

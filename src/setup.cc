@@ -31,7 +31,3 @@ void Setup::set_fen(std::string fen) {
 Game Setup::finish() {
     return Game(board.clone());
 }
-
-void Setup::run_setup() {
-    throw std::runtime_error("not implemented");
-}

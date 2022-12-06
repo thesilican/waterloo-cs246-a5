@@ -8,24 +8,24 @@ Observer::~Observer() {
     subject.deattach(this);
 }
 
-Subject::Subject() : games() {
+Subject::Subject() : observers() {
 }
 
 void Subject::attach(Observer *o) {
-    games.push_back(o);
+    observers.push_back(o);
 }
 
 void Subject::deattach(Observer *o) {
-    for (auto i = games.begin(); i != games.end(); i++) {
+    for (auto i = observers.begin(); i != observers.end(); i++) {
         if (*i == o) {
-            games.erase(i);
+            observers.erase(i);
             break;
         }
     }
 }
 
 void Subject::notify_observers(Controller &controller) {
-    for (auto i : games) {
+    for (auto i : observers) {
         i->notify(controller);
     }
 }

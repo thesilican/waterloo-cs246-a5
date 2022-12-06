@@ -4,7 +4,7 @@
 #include <iostream>
 #include <regex>
 
-std::unique_ptr<Bot> bot_from_string(std::string s) {
+static std::unique_ptr<Bot> bot_from_string(std::string s) {
     if (s == "human") {
         return nullptr;
     } else if (s == "computer1") {
@@ -20,13 +20,13 @@ std::unique_ptr<Bot> bot_from_string(std::string s) {
     }
 }
 
-bool prompt(std::string &line) {
+static bool prompt(std::string &line) {
     std::cout << "> ";
     return !std::getline(std::cin, line).fail();
 }
 
 Controller::Controller()
-    : setup(), game(), white_wins(0), black_wins(0), draws(0) {
+    : setup(), white_wins(0), black_wins(0), draws(0), game() {
 }
 
 void Controller::run_setup() {
@@ -96,10 +96,6 @@ void Controller::run_game() {
             notify_observers(*this);
         }
     }
-}
-
-void Controller::do_game_command(std::string command) {
-    throw std::runtime_error("not implemented");
 }
 
 void Controller::command_loop() {

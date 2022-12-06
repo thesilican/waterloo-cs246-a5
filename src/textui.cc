@@ -1,41 +1,40 @@
 #include "textui.h"
 #include "debug.h"
 
-TextUi::TextUi(Subject &s) : Observer(s) {
+TextUi::TextUi(Subject &s, bool use_unicode, bool show_debug)
+    : Observer(s), use_unicode(use_unicode), show_debug(show_debug) {
 }
 
-bool UNICODE_CHARS = true;
-
-std::string TextUi::square_char(std::unique_ptr<Piece> &piece) {
+std::string TextUi::square_char(std::unique_ptr<Piece> &piece, Point p) {
     if (piece == nullptr) {
-        return UNICODE_CHARS ? "·" : ".";
+        return use_unicode ? "·" : ((p.x + p.y) % 2) ? "_" : " ";
     } else if (piece->player == Player::White) {
         if (piece->piece_type() == PieceType::Pawn) {
-            return UNICODE_CHARS ? "♟︎" : "P";
+            return use_unicode ? "♟︎" : "P";
         } else if (piece->piece_type() == PieceType::Knight) {
-            return UNICODE_CHARS ? "♞" : "N";
+            return use_unicode ? "♞" : "N";
         } else if (piece->piece_type() == PieceType::Bishop) {
-            return UNICODE_CHARS ? "♝" : "B";
+            return use_unicode ? "♝" : "B";
         } else if (piece->piece_type() == PieceType::Rook) {
-            return UNICODE_CHARS ? "♜" : "R";
+            return use_unicode ? "♜" : "R";
         } else if (piece->piece_type() == PieceType::Queen) {
-            return UNICODE_CHARS ? "♛" : "Q";
+            return use_unicode ? "♛" : "Q";
         } else {
-            return UNICODE_CHARS ? "♚" : "K";
+            return use_unicode ? "♚" : "K";
         }
     } else {
         if (piece->piece_type() == PieceType::Pawn) {
-            return UNICODE_CHARS ? "♙" : "p";
+            return use_unicode ? "♙" : "p";
         } else if (piece->piece_type() == PieceType::Knight) {
-            return UNICODE_CHARS ? "♘" : "n";
+            return use_unicode ? "♘" : "n";
         } else if (piece->piece_type() == PieceType::Bishop) {
-            return UNICODE_CHARS ? "♗" : "b";
+            return use_unicode ? "♗" : "b";
         } else if (piece->piece_type() == PieceType::Rook) {
-            return UNICODE_CHARS ? "♖" : "r";
+            return use_unicode ? "♖" : "r";
         } else if (piece->piece_type() == PieceType::Queen) {
-            return UNICODE_CHARS ? "♕" : "q";
+            return use_unicode ? "♕" : "q";
         } else {
-            return UNICODE_CHARS ? "♔" : "k";
+            return use_unicode ? "♔" : "k";
         }
     }
 }
@@ -45,40 +44,43 @@ void TextUi::print_game(Game &game) {
         std::cout << (j + 1) << " ";
         for (int i = 0; i < 8; i++) {
             std::unique_ptr<Piece> &p = game.board.get(Point(i, j));
-            std::cout << square_char(p);
+            std::cout << square_char(p, Point(i, j));
         }
         std::cout << std::endl;
     }
     std::cout << "\n  abcdefgh" << std::endl;
 
-    if (game.board.to_move == Player::White) {
-        std::cout << "w";
-    } else {
-        std::cout << "b";
-    }
+    if (show_debug) {
+        if (game.board.to_move == Player::White) {
+            std::cout << "w";
+        } else {
+            std::cout << "b";
+        }
 
-    std::cout << " ";
+        std::cout << " ";
 
-    char lookup[] = "KQkq";
-    for (int i = 0; i < 4; i++) {
-        if (game.board.can_castle[i]) {
-            std::cout << lookup[i];
+        char lookup[] = "KQkq";
+        for (int i = 0; i < 4; i++) {
+            if (game.board.can_castle[i]) {
+                std::cout << lookup[i];
+            } else {
+                std::cout << "-";
+            }
+        }
+
+        std::cout << " ";
+
+        if (game.board.en_passent_square.in_bounds()) {
+            std::cout << game.board.en_passent_square.algebraic();
         } else {
             std::cout << "-";
         }
+        std::cout << std::endl;
     }
-
-    std::cout << " ";
-
-    if (game.board.en_passent_square.in_bounds()) {
-        std::cout << game.board.en_passent_square.algebraic();
-    } else {
-        std::cout << "-";
-    }
-    std::cout << std::endl;
 }
 
 void TextUi::notify(Controller &controller) {
+    std::cout << std::endl;
     print_game(controller.game);
     if (controller.game.resigned) {
         if (controller.game.board.to_move == Player::Black) {
@@ -91,21 +93,22 @@ void TextUi::notify(Controller &controller) {
     } else if (controller.game.board.is_checkmate()) {
         if (controller.game.board.to_move == Player::Black) {
             // black in checkmate
-            std::cout << "Checkmate! White wins!\n";           
+            std::cout << "Checkmate! White wins!\n";
         } else {
             // white in checkmate
-            std::cout << "Checkmate! Black wins!\n";   
+            std::cout << "Checkmate! Black wins!\n";
         }
     } else if (controller.game.board.is_stalemate()) {
         // stalemate
-        std::cout << "Stalemate!\n"; 
+        std::cout << "Stalemate!\n";
     } else if (controller.game.board.in_check()) {
         if (controller.game.board.to_move == Player::Black) {
             // black in check
-            std::cout << "Black is in check.\n"; 
+            std::cout << "Black is in check.\n";
         } else {
             // white in check
-            std::cout << "White is in check.\n";  
+            std::cout << "White is in check.\n";
         }
     }
+    std::cout << std::endl;
 }
