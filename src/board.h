@@ -14,7 +14,6 @@ enum class PieceType;
 enum class Player;
 
 class Board {
-    std::vector<Move> possible_moves();
     std::unique_ptr<Piece> pieces[8][8];
 
   public:
@@ -32,6 +31,7 @@ class Board {
           int full_move);
     std::unique_ptr<Piece> &get(Point p);
     std::vector<Move> legal_moves();
+    std::vector<Move> possible_moves();
     bool in_check();
     bool is_checkmate();
     bool is_stalemate();

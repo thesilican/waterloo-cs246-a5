@@ -4,6 +4,7 @@
 #include "observer.h"
 #include "setup.h"
 #include "testbot.h"
+#include "testbot2.h"
 #include "ai.h"
 class Setup;
 class Game;

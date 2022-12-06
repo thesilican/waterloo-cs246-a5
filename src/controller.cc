@@ -102,25 +102,42 @@ void Controller::do_game_command(std::string command) {
 }
 
 void Controller::command_loop() {
-    std::cout << "Starting Chess Program" << std::endl;
+    // std::cout << "Starting Chess Program" << std::endl;
 
-    std::string line;
-    std::smatch result;
-    while (prompt(line)) {
-        static std::regex game_regex = std::regex(
-            "^game\\s+(human|computer[1-4])\\s+(human|computer[1-4])");
-        if (line == "setup") {
-            run_setup();
-        } else if (std::regex_match(line, result, game_regex)) {
-            auto iter = ++result.begin();
-            white_bot = bot_from_string(*(iter++));
-            black_bot = bot_from_string(*(iter++));
-            std::cout << "Starting game" << std::endl;
-            run_game();
-        } else {
-            std::cout << "Invalid command" << std::endl;
-        }
+    // std::string line;
+    // std::smatch result;
+    // while (prompt(line)) {
+    //     static std::regex game_regex = std::regex(
+    //         "^game\\s+(human|computer[1-4])\\s+(human|computer[1-4])");
+    //     if (line == "setup") {
+    //         run_setup();
+    //     } else if (std::regex_match(line, result, game_regex)) {
+    //         auto iter = ++result.begin();
+    //         white_bot = bot_from_string(*(iter++));
+    //         black_bot = bot_from_string(*(iter++));
+    //         std::cout << "Starting game" << std::endl;
+    //         run_game();
+    //     } else {
+    //         std::cout << "Invalid command" << std::endl;
+    //     }
+    // }
+    // std::cout << "\n\nFinal Score:\nWhite: " << white_wins + (draws / 2)
+    //           << "\nBlack: " << black_wins + (draws / 2) << std::endl;
+    notify_observers(*this);
+    std::string l;
+    TestBot t{game.board};
+    while (true) {
+        std::cin >> l;
+        Move m = t.uncompress_move(t.alpha_beta(-100000,100000,3).move);
+        game.make_move(m);
+        t.move(t.compress_move(m));
+        notify_observers(*this);
+        std::cin >> l;
+        Move first(l);
+        game.make_move(first);
+        t.move(t.compress_move(first));
+        notify_observers(*this);
     }
-    std::cout << "\n\nFinal Score:\nWhite: " << white_wins + (draws / 2)
-              << "\nBlack: " << black_wins + (draws / 2) << std::endl;
+    getchar();
+
 }
