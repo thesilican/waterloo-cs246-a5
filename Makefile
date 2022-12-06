@@ -27,15 +27,19 @@ SRC := $(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*,.cc)))
 HEAD := $(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*,.h)))
 OBJ := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
-.PHONY: all
-all: $(TARGET)
+.PHONY: default
+default: $(TARGET)
 
 .PHONY: fast
 fast: $(TARGET_FAST)
 
 .PHONY: run
-run: all
+run: $(TARGET)
 	./$(TARGET)
+
+.PHONY: run-fast
+run-fast: $(TARGET_FAST)
+	./$(TARGET_FAST)
 
 .PHONY: clean
 clean:
@@ -53,9 +57,5 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc $(HEAD)
 	mkdir -p $(OBJ_PATH)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-.PHONY: debug-makefile
-debug-makefile:
-	@echo $(CXXFLAGS)
-
-test: all
+test: $(TARGET)
 	test/test.py
