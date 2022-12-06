@@ -2,7 +2,6 @@
 #define TESTBOT_H
 
 #include "point.h"
-#include "zobrist.h"
 #include "board.h"
 #include <vector>
 #include <iostream>
