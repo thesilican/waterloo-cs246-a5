@@ -143,12 +143,22 @@ void Controller::run_game() {
             std::string from_str = *(iter++);
             std::string to_str = *(iter++);
             std::string promote_str = *(iter++);
+            Move move;
             try {
-                Move move(from_str + to_str + promote_str);
-                game.make_move(move);
-                success = true;
+                move = Move(from_str + to_str + promote_str);
             } catch (...) {
                 std::cout << "Invalid move" << std::endl;
+            }
+            bool found = false;
+            for (auto m : game.board.legal_moves()) {
+                if (m == move) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                game.make_move(move);
+                success = true;
             }
         } else if (enable_bonus &&
                    std::regex_match(line, result, move_san_regex)) {
@@ -160,13 +170,24 @@ void Controller::run_game() {
             }
             auto iter = ++result.begin();
             std::string san_str = *(iter++);
+            Move move;
             try {
-                Move move(san_str, game.board);
-                game.make_move(move);
-                success = true;
+                move = Move(san_str, game.board);
             } catch (std::exception &e) {
                 std::cout << "Invalid move: " << e.what() << std::endl;
             }
+            bool found = false;
+            for (auto m : game.board.legal_moves()) {
+                if (m == move) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                game.make_move(move);
+                success = true;
+            }
+
         } else if (line == "move" || (enable_bonus && line == "")) {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
