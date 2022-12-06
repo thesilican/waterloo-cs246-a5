@@ -16,6 +16,8 @@ class Setup {
   public:
     // Default constructor for setup
     Setup();
+    // Used for removing castling and en passant rights
+    void remove_rights();
     // Set which player moves first
     void set_to_move(Player player);
     // Add a piece to a square on the board

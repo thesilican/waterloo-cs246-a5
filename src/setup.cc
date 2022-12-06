@@ -1,7 +1,14 @@
 #include "setup.h"
 #include "debug.h"
 
-Setup::Setup() : board() {
+Setup::Setup() : board() {}
+
+void Setup::remove_rights() {
+    board.en_passent_square = Point(-1,-1);
+    board.can_castle[0] = false;
+    board.can_castle[1] = false;
+    board.can_castle[2] = false;
+    board.can_castle[3] = false;
 }
 
 void Setup::set_to_move(Player player) {

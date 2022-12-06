@@ -5,6 +5,7 @@
 #include "observer.h"
 #include "setup.h"
 #include "testbot.h"
+#include <cctype>
 class Setup;
 class Game;
 class Subject;

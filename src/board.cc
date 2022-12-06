@@ -293,6 +293,34 @@ std::string Board::fen() {
     return s.str();
 }
 
+bool Board::illegal_pawns() {
+    for (int i = 0; i < 8; i++) {
+        // Checks bottom and top squares for pawns
+        Point bot{i,0};
+        Point top{i,7};
+        if (get(bot) != nullptr && get(bot)->to_char() == 'p' || get(bot)->to_char() == 'P') return true;
+        if (get(top) != nullptr && get(top)->to_char() == 'p' || get(top)->to_char() == 'P') return true;
+    }
+    return false;
+}
+
+bool Board::illegal_kings() {
+    int white = 0, black = 0;
+    // Counts the number of kings to ensure they are both 1
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            Point p{i,j};
+            if (get(p) == nullptr) continue;
+            if (get(p)->to_char() == 'K') {
+                white++;
+            } else if (get(p)->to_char() == 'k') {
+                black++;
+            }
+        }
+    }
+    return (white == 1 && black == 1);
+}
+
 Board::Board(std::string fen) {
     static std::regex fen_regex =
         std::regex("^([PNBRQKpnbrqk1-8/]+) (w|b) (-|K?Q?k?q?) (-|[a-h][1-8]) "
