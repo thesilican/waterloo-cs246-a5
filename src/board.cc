@@ -297,8 +297,8 @@ bool Board::illegal_pawns() {
         // Checks bottom and top squares for pawns
         Point bot{i,0};
         Point top{i,7};
-        if (get(bot) != nullptr && get(bot)->to_char() == 'p' || get(bot)->to_char() == 'P') return true;
-        if (get(top) != nullptr && get(top)->to_char() == 'p' || get(top)->to_char() == 'P') return true;
+        if (get(bot) != nullptr && (get(bot)->to_char() == 'p' || get(bot)->to_char() == 'P')) return true;
+        if (get(top) != nullptr && (get(top)->to_char() == 'p' || get(top)->to_char() == 'P')) return true;
     }
     return false;
 }
@@ -317,7 +317,7 @@ bool Board::illegal_kings() {
             }
         }
     }
-    return (white == 1 && black == 1);
+    return !(white == 1 && black == 1);
 }
 
 Board::Board(std::string fen) {
