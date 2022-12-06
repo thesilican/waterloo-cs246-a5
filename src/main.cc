@@ -31,16 +31,18 @@ int main(int argc, char *argv[]) {
     }
     
     // Parse additional command line flags
-    bool debug = false, unicode = false;
+    bool debug = false, unicode = false, enable_bonus = false;
     for (int i = 1; i < argc; i++) {
         if (std::string(argv[i]) == "--unicode") {
             unicode = true;
         } else if (std::string(argv[i]) == "--debug") {
             debug = true;
+        } else if (std::string(argv[i]) == "--enable-bonus") {
+            enable_bonus = true;
         }
     }
 
-    Controller c;
+    Controller c(enable_bonus);
     GraphicsUi g(c);
     TextUi t(c, unicode, debug);
     c.command_loop();

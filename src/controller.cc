@@ -26,8 +26,9 @@ static bool prompt(std::string &line) {
     return !std::getline(std::cin, line).fail();
 }
 
-Controller::Controller()
-    : setup(), white_wins(0), black_wins(0), draws(0), game() {
+Controller::Controller(bool enable_bonus)
+    : setup(), white_wins(0), black_wins(0), draws(0),
+      enable_bonus(enable_bonus), game() {
 }
 
 void Controller::run_setup() {
@@ -54,7 +55,8 @@ void Controller::run_setup() {
             }
             if (!game.board.is_check()) {
                 Board c = game.board.clone();
-                c.to_move = (c.to_move == Player::Black) ? Player::White : Player::Black;
+                c.to_move = (c.to_move == Player::Black) ? Player::White
+                                                         : Player::Black;
                 if (c.is_check()) {
                     std::cout << "No kings can be in check!\n";
                     continue;
@@ -88,9 +90,12 @@ void Controller::run_setup() {
             }
             try {
                 if (p <= 90) {
-                    setup.add_piece(Point(pos),piece_type_from_char(tolower(p)),Player::White);
+                    setup.add_piece(Point(pos),
+                                    piece_type_from_char(tolower(p)),
+                                    Player::White);
                 } else {
-                    setup.add_piece(Point(pos),piece_type_from_char(p),Player::Black);
+                    setup.add_piece(Point(pos), piece_type_from_char(p),
+                                    Player::Black);
                 }
                 game = setup.finish();
                 notify_observers(*this);
@@ -145,7 +150,8 @@ void Controller::run_game() {
             } catch (...) {
                 std::cout << "Invalid move" << std::endl;
             }
-        } else if (std::regex_match(line, result, move_san_regex)) {
+        } else if (enable_bonus &&
+                   std::regex_match(line, result, move_san_regex)) {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot != nullptr) {
@@ -161,7 +167,7 @@ void Controller::run_game() {
             } catch (std::exception &e) {
                 std::cout << "Invalid move: " << e.what() << std::endl;
             }
-        } else if (line == "move" || line == "") {
+        } else if (line == "move" || (enable_bonus && line == "")) {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot == nullptr) {
@@ -184,7 +190,7 @@ void Controller::run_game() {
                 game.make_move(move);
                 success = true;
             }
-        } else if (line == "undo") { //need to include bonus compiler flag "-enablebonus"
+        } else if (enable_bonus && line == "undo") {
             try {
                 game.undo_move();
                 success = true;

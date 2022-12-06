@@ -24,6 +24,8 @@ class Controller : public Subject {
     std::unique_ptr<Bot> white_bot;
     // The bot currently used by the black player (null for human player)
     std::unique_ptr<Bot> black_bot;
+    // Enable bonus features
+    bool enable_bonus;
 
     // Command loop for setup
     void run_setup();
@@ -35,7 +37,7 @@ class Controller : public Subject {
     Game game;
 
     // Default constructor for the controller
-    Controller();
+    Controller(bool enable_bonus = false);
     // Outermost text command loop, can choose to setup or start game
     void command_loop();
 };
