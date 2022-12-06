@@ -11,6 +11,9 @@ class Game {
     std::vector<Board> history;
 
   public:
+    // Used to denote whether the current player has resigned the game
+    bool resigned = false;
+
     // The current board state of the game
     Board board;
 
