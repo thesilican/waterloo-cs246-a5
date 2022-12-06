@@ -73,6 +73,7 @@ void GraphicsUi::display_game(Game& game) {
 
 void GraphicsUi::notify(Controller& controller) {
     display_game(controller.game);
+    win.fillRectangle(0, 500, 500, 50, 0xffffff);
     if (controller.game.resigned) {
         if (controller.game.board.to_move == Player::Black) {
             // black resigned
