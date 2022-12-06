@@ -23,8 +23,12 @@ class Move {
     // undefined value if has_promotes_to is false
     PieceType promotes_to;
 
+    // Default constructor for a move (should only be used for temporary values)
+    Move();
     // Construct a move from a UCI extended algebraic notation string
     Move(std::string uci);
+    // Construct a move from standard algebraic notation
+    Move(std::string san, Board &b);
     // Construct a move with no promotion piece type
     Move(Point from, Point to);
     // Construct a move with a promotion piece type
