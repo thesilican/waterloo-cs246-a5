@@ -4,71 +4,87 @@ hide empty fields
 hide empty methods
 
 abstract class Bot {
-+ {abstract} best_move(Game &game): Move;
++ {abstract} best_move(Game &game): Move
 }
 
 class BumblingBuffoonBot {
-+ best_move(Game &game): Move;
++ best_move(Game &game): Move
 }
 BumblingBuffoonBot <|-u- Bot
 
 class SlightlyCompetentBot {
-+ best_move(Game &game): Move;
++ best_move(Game &game): Move
 }
 SlightlyCompetentBot <|-u- Bot
 
 class AverageCsStudentBot {
-+ best_move(Game &game): Move;
++ best_move(Game &game): Move
 }
 AverageCsStudentBot <|-u- Bot
 
+class Eval {
++move: int
++ev: int
+}
+
 class ChuckNorrisBot {
-+ best_move(Game &game): Move;
+- board: char[8][8]
+- castling: bool[4]
+- en_passent_good: bool[4]
++ black_turn: bool
++ best_move(Game &game): Move
++ alpha_beta(int alpha, int beta, int depth): Eval
++ to_board(): Board
++ move(int move)
++ undo_move(int move, bool is_enpassent, char captured)
++ uncompress_move(int m): Move
++ compress_move(Move m): int
++ legal_moves(vector<int> &final_moves)
++ is_check(bool black): bool
++ is_checkmate(): bool
++ is_stalemate(): bool
++ best_move(Game &game): Move
 }
 ChuckNorrisBot <|-u- Bot
 
 
 class Board {
 + to_move: Player
-+ pieces: unique_ptr<Piece> pieces[8][8]
-+ en_passent_square: Point
 + can_castle: bool[4]
-+ set(Point p, PieceType piece, Player player): void
++ en_passent_square: Point
++ half_move: int
++ full_move: int
+- possible_moves(): vector<Move>
+- pieces: unique_ptr<Piece>[8][8]
++ get(Point p): unique_ptr<Piece>&
 + legal_moves(): vector<Move>
-+ in_check(): bool
++ is_check(): bool
 + is_checkmate(): bool
-+ make_move(Move m): void
++ is_stalemate(): bool
++ make_move(Move m)
 + clone(): Board
++ fen(): string
 }
 Board "1" *--> "1" Player
 Board "1" *--> "64" Piece
 Board "1" *--> "1" Point
 
-enum ControllerState {
-Setup
-InProgress
-WhiteWin
-BlackWin
-Draw
-Finished
-}
-
 class Controller {
-+setup: Setup
-+game: Game
-+state: ControllerState
-+white_wins: int
-+black_wins: int
-+draws: int
-+command_loop(): void
--setup(): void
--run_game(): void
--do_game_command(string command): void
+- setup: Setup
+- white_wins: int
+- black_wins: int
+- draws: int
+- white_bot: unique_ptr<Bot>
+- black_bot: unique_ptr<Bot>
++ game: Game
+- run_setup()
+- run_game()
++ command_loop()
 }
 Controller -u-|> Subject
 Controller "1" *--> "1" Setup
 Controller "1" *--> "1" Game
-Controller "1" *--> "1" ControllerState
+Controller "1" *--> "2" Bot
 
 enum Player {
 White
@@ -76,46 +92,58 @@ Black
 }
 
 class Game {
-+board: Board
--move_history: vector<Board>
-+make_move(Move m): void
-+undo_move(Move m): void
+- move_history: vector<Board>
++ board: Board
++ resigned: bool
++ make_move(Move m)
++ undo_move()
 }
 Game "1" *--> "1.." Board
 
 class Move {
-+piece: PieceType
--from: Point
--to: Point
++ from: Point
++ to: Point
++ has_promotes_to: bool
++ promotes_to: PieceType
++ uci(): string
++ piece(Board &b): unique_ptr<Piece>&
++ captured(Board &b): unique_ptr<Piece>&
 }
 Move "1" *--> "1" PieceType
 
 abstract class Observer {
--subject: Subject &
-+{abstract} notify(Controller &controller): void
+- subject: Subject &
++ {abstract} notify(Controller &controller)
 }
 
 class TextUi {
--subject: Subject
-+notify(Controller &controller): void
+- subject: Subject
+- use_unicode: bool
+- show_debug: bool
+- square_char(unique_ptr<Piece> &piece, Point p): string
+- print_game(Game &game)
++ notify(Controller &controller)
 }
 TextUi -u-|> Observer
 TextUi "1" o--> "1" Subject
 
 class GraphicsUi {
--window: Xwindow
--subject: Subject
-+notify(Controller &controller): void
+- window: Xwindow
+- board: char[8][8]
+- subject: Subject
+- display_game(Game &game)
+- get_image(unique_ptr<Piece> &p): PixelImg&
++ notify(Controller &controller)
 }
 GraphicsUi -u-|> Observer
 GraphicsUi "1" o--> "1" Subject
 GraphicsUi "1" *--> "1" Xwindow
 
 class Subject {
--games: vector<Observer *>
-+attach(Observer *o): void
-+dettach(Observer *o): void
-+notify_observers(Controller &controller): void
+- games: vector<Observer*>
++ attach(Observer *o)
++ dettach(Observer *o)
++ notify_observers(Controller &controller)
 }
 
 Subject "1" o--> "0.." Observer
@@ -134,6 +162,7 @@ abstract class Piece {
 +{abstract} possible_moves(Board &board, Point from): vector<Move>
 +{abstract} piece_type(): PieceType
 +{abstract} clone(): unique_ptr<Piece>
++{abstract} to_char(): char
 }
 
 class Pawn {
@@ -141,6 +170,7 @@ class Pawn {
 +possible_moves(Board &board, Point from): vector<Move>
 +piece_type(): PieceType
 +clone(): unique_ptr<Piece>
++to_char(): char
 }
 Pawn -u-|> Piece
 Pawn "1" *--> "1" Player
@@ -150,6 +180,7 @@ class Knight {
 +possible_moves(Board &board, Point from): vector<Move>
 +piece_type(): PieceType
 +clone(): unique_ptr<Piece>
++to_char(): char
 }
 Knight -u-|> Piece
 Knight "1" *--> "1"Player
@@ -159,6 +190,7 @@ class Bishop {
 +possible_moves(Board &board, Point from): vector<Move>
 +piece_type(): PieceType
 +clone(): unique_ptr<Piece>
++to_char(): char
 }
 Bishop -u-|> Piece
 Bishop "1" *--> "1" Player
@@ -168,6 +200,7 @@ class Rook {
 +possible_moves(Board &board, Point from): vector<Move>
 +piece_type(): PieceType
 +clone(): unique_ptr<Piece>
++to_char(): char
 }
 Rook -u-|> Piece
 Rook "1" *--> "1" Player
@@ -177,6 +210,7 @@ class Queen {
 +possible_moves(Board &board, Point from): vector<Move>
 +piece_type(): PieceType
 +clone(): unique_ptr<Piece>
++to_char(): char
 }
 Queen -u-|> Piece
 Queen "1" *--> "1" Player
@@ -186,6 +220,7 @@ class King {
 +possible_moves(Board &board, Point from): vector<Move>
 +piece_type(): PieceType
 +clone(): unique_ptr<Piece>
++to_char(): char
 }
 King -u-|> Piece
 King "1" *--> "1" Player
@@ -195,32 +230,25 @@ class Point {
 +y: int
 +in_bounds(): bool
 +algebraic(): string
-+operator+(Point other): Point
-+operator-(Point other): Point
 }
 
 class Setup {
--board: Board
--to_move: Player
--add_piece(Point point, PieceType piece, Player player): void
--remove_piece(Point point): void
-+run_setup(): void
-+perform_command(string command): void
+- board: Board
++ set_to_move(Player player)
++ add_piece(Point point, PieceType piece, Player player)
++ remove_piece(Point point)
++ clear_pieces()
++ reset_board()
++ set_fen(string fen)
++ finish(): Game
 }
 Setup "1" *--> "1" Board
 Setup "1" *--> "1" Player
 
-enum Color {
-White
-Black
-Red
-Green
-Blue
-Cyan
-Yellow
-Magenta
-Orange
-Brown
+class PixelImg {
++ data: vector<vector<int>>
++ width: int
++ height: int
 }
 
 class Xwindow {
@@ -228,13 +256,10 @@ class Xwindow {
 -w: Window
 -s: int
 -gc: GC
--colors: Color[10]
-+fillRectangle(int x, int y, int w, int h, int color): void
-+drawString(int x, int y, string msg): void
++fillRectangle(int x, int y, int w, int h, int color)
++drawImage(int x, int y, PixelImg &img)
++drawString(int x, int y, string msg)
++flush()
 }
-Xwindow "1" *-r-> "10" Color
-
-ChuckNorrisBot -[hidden]r- Game
-PieceType -[hidden]r- Bot
 
 @enduml
