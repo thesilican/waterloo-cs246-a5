@@ -58,6 +58,10 @@ class AverageCsStudentBot : public Bot {
 
 // Bot Level 4
 class ChuckNorrisBot : public Bot {
+    std::random_device rd;
+    std::mt19937 mt{1234};
+    std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
+
   public:
     ChuckNorrisBot() = default;
     Move best_move(Game &game) override;

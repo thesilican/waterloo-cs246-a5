@@ -73,6 +73,7 @@ void Controller::run_game() {
             if (bot == nullptr) {
                 std::cout << "Expected human move" << std::endl;
             }
+            std::cout << "Bot is thinking..." << std::endl;
             Move move = bot->best_move(game);
             // Sanity check
             bool found = false;
