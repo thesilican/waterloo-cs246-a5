@@ -62,7 +62,7 @@ void Controller::run_game() {
             } catch (...) {
                 std::cout << "Invalid move" << std::endl;
             }
-        } else if (line == "move") {
+        } else if (line == "move" || line == "") {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot == nullptr) {

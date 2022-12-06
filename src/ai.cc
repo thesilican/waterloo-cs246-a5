@@ -67,21 +67,26 @@ Move AverageCsStudentBot::best_move(Game &game) {
     }
     // Minimize the number of opponent capture moves
     int min = INT_MAX;
-    Move best = moves[0];
+    std::vector<Move> best{moves[0]};
     for (auto move : moves) {
         int count = 0;
         Board board = game.board.clone();
+        board.make_move(move);
         for (auto m : board.legal_moves()) {
             if (m.captured(board) != nullptr) {
                 count++;
             }
         }
-        if (count < min) {
-            best = move;
+        if (count == min) {
+            best.push_back(move);
+        } else if (count < min) {
+            best.clear();
+            best.push_back(move);
             min = count;
         }
     }
-    return best;
+    int idx = dist(mt) % best.size();
+    return best[idx];
 }
 
 Move ChuckNorrisBot::best_move(Game &game) {

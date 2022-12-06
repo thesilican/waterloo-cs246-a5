@@ -24,7 +24,7 @@ class NoMovesException : public std::exception {
 // Makes random moves
 class BumblingBuffoonBot : public Bot {
     std::random_device rd;
-    std::mt19937 mt{rd()};
+    std::mt19937 mt{1234};
     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
   public:
@@ -36,7 +36,7 @@ class BumblingBuffoonBot : public Bot {
 // Prefers capturing and checks over other moves
 class SlightlyCompetentBot : public Bot {
     std::random_device rd;
-    std::mt19937 mt{rd()};
+    std::mt19937 mt{1234};
     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
   public:
@@ -48,7 +48,7 @@ class SlightlyCompetentBot : public Bot {
 // Prefers avoiding capture, capturing moves, and checks
 class AverageCsStudentBot : public Bot {
     std::random_device rd;
-    std::mt19937 mt{rd()};
+    std::mt19937 mt{1234};
     std::uniform_int_distribution<unsigned int> dist{0, UINT_MAX};
 
   public:
