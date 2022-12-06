@@ -70,7 +70,7 @@ std::vector<Move> Board::legal_moves() {
             }
         }
 
-        // Check for castling through check
+        // Check for castling in/through check
         int br = white ? 0 : 7;
         if (move.from == Point(4, br) && get(move.from) != nullptr &&
             get(move.from)->piece_type() == PieceType::King &&
@@ -86,7 +86,7 @@ std::vector<Move> Board::legal_moves() {
             board.make_move(Move(move.from, middle));
             std::vector<Move> child_moves = board.possible_moves();
             for (auto cmove : child_moves) {
-                if (cmove.to == middle) {
+                if (cmove.to == middle || cmove.to == Point(4, br)) {
                     legal = false;
                     break;
                 }
