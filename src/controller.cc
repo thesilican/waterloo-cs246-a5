@@ -3,6 +3,7 @@
 #include "debug.h"
 #include <iostream>
 #include <regex>
+#include <sstream>
 
 static std::unique_ptr<Bot> bot_from_string(std::string s) {
     if (s == "human") {
@@ -16,7 +17,7 @@ static std::unique_ptr<Bot> bot_from_string(std::string s) {
     } else if (s == "computer4") {
         return std::unique_ptr<Bot>(new ChuckNorrisBot());
     } else {
-        throw std::runtime_error("invalid playe type string: " + s);
+        throw std::runtime_error("invalid player type string: " + s);
     }
 }
 
@@ -30,7 +31,86 @@ Controller::Controller()
 }
 
 void Controller::run_setup() {
-    throw std::runtime_error("not implemented");
+    setup.remove_rights();
+
+    game = setup.finish();
+
+    notify_observers(*this);
+
+    std::string line;
+    while (prompt(line)) {
+        std::stringstream ss{line};
+        std::string command;
+        ss >> command;
+        if (command == "done") {
+            // Checks to ensure setup is valid
+            if (game.board.illegal_kings()) {
+                std::cout << "Illegal king count!\n";
+                continue;
+            }
+            if (game.board.illegal_pawns()) {
+                std::cout << "Illegal pawn placement!\n";
+                continue;
+            }
+            if (!game.board.in_check()) {
+                Board c = game.board.clone();
+                c.to_move = (c.to_move == Player::Black) ? Player::White : Player::Black;
+                if (c.in_check()) {
+                    std::cout << "No kings can be in check!\n";
+                    continue;
+                }
+            } else {
+                std::cout << "No kings can be in check!\n";
+                continue;
+            }
+            break;
+        }
+        if (command == "=") {
+            std::string col;
+            ss >> col;
+            if (col == "black" || col == "Black") {
+                setup.set_to_move(Player::Black);
+                game = setup.finish();
+                notify_observers(*this);
+            } else if (col == "white" || col == "White") {
+                setup.set_to_move(Player::White);
+                game = setup.finish();
+                notify_observers(*this);
+            } else {
+                std::cout << "Invalid color!\n";
+            }
+        } else if (command == "+") {
+            char p;
+            std::string pos;
+            if (!(ss >> p) || !(ss >> pos)) {
+                std::cout << "Invalid format!\n";
+                continue;
+            }
+            try {
+                if (p <= 90) {
+                    setup.add_piece(Point(pos),piece_type_from_char(tolower(p)),Player::White);
+                } else {
+                    setup.add_piece(Point(pos),piece_type_from_char(p),Player::Black);
+                }
+                game = setup.finish();
+                notify_observers(*this);
+            } catch (...) {
+                std::cout << "Invalid piece or position!\n";
+            }
+        } else if (command == "-") {
+            std::string pos;
+            ss >> pos;
+            try {
+                setup.remove_piece(Point(pos));
+                game = setup.finish();
+                notify_observers(*this);
+            } catch (...) {
+                std::cout << "Invalid position!\n";
+            }
+        } else {
+            std::cout << "Invalid command!\n";
+        }
+    }
 }
 
 void Controller::run_game() {
@@ -104,7 +184,7 @@ void Controller::run_game() {
                 game.make_move(move);
                 success = true;
             }
-        } else if (line == "undo") {
+        } else if (line == "undo") { //need to include bonus compiler flag "-enablebonus"
             try {
                 game.undo_move();
                 success = true;

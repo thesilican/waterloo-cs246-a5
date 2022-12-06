@@ -58,6 +58,10 @@ class Board {
     Board clone();
     // Returns the fen representation of the current board
     std::string fen();
+    // Returns whether pawns exist on first or last rows
+    bool illegal_pawns();
+    // Returns whether wrong number of Kings exists
+    bool illegal_kings();
 };
 
 #endif
