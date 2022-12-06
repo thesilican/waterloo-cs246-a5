@@ -11,7 +11,7 @@ class TextUi : public Observer {
     // Whether to render text using unicode chess pieces
     bool use_unicode;
     // Whether to print extra debug info like player to move,
-    // castling rights and en passent square
+    // castling rights and en passant square
     bool show_debug;
 
     // Returns a character for a given piece or tile

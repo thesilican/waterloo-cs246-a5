@@ -170,12 +170,12 @@ std::vector<Move> Pawn::possible_moves(Board &board, Point from) {
         }
     }
 
-    // Capture moves (including en passent)
+    // Capture moves (including en passant)
     Point cl = from + fwd + Point(-1, 0);
     bool cl_possible =
         cl.in_bounds() &&
         ((board.get(cl) != nullptr && board.get(cl)->player != player) ||
-         cl == board.en_passent_square);
+         cl == board.en_passant_square);
     if (cl_possible) {
         if (m1.y == (white ? 7 : 0)) {
             moves.push_back(Move(from, cl, PieceType::Queen));
@@ -190,7 +190,7 @@ std::vector<Move> Pawn::possible_moves(Board &board, Point from) {
     bool cr_possible =
         cr.in_bounds() &&
         ((board.get(cr) != nullptr && board.get(cr)->player != player) ||
-         cr == board.en_passent_square);
+         cr == board.en_passant_square);
     if (cr_possible) {
         if (m1.y == (white ? 7 : 0)) {
             moves.push_back(Move(from, cr, PieceType::Queen));

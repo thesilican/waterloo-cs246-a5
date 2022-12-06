@@ -25,9 +25,9 @@ class Board {
     Player to_move;
     // Which castlings are allowed (KQkq)
     bool can_castle[4];
-    // The square which an en-passent capture can take place
-    // (-1,-1) if no en-passent is possible
-    Point en_passent_square;
+    // The square which an en-passant capture can take place
+    // (-1,-1) if no en-passant is possible
+    Point en_passant_square;
     // Number of half moves since the last pawn move or capture
     int half_move;
     // Number of full moves since the beginning of the game
@@ -39,7 +39,7 @@ class Board {
     Board(std::string fen);
     // Constructs a game from its various parts
     Board(std::unique_ptr<Piece> pieces[8][8], Player to_move,
-          bool can_castle[4], Point en_passent_square, int half_move,
+          bool can_castle[4], Point en_passant_square, int half_move,
           int full_move);
           // Returns the piece at a given square
     std::unique_ptr<Piece> &get(Point p);

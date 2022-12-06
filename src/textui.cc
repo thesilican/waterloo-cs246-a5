@@ -70,8 +70,8 @@ void TextUi::print_game(Game &game) {
 
         std::cout << " ";
 
-        if (game.board.en_passent_square.in_bounds()) {
-            std::cout << game.board.en_passent_square.algebraic();
+        if (game.board.en_passant_square.in_bounds()) {
+            std::cout << game.board.en_passant_square.algebraic();
         } else {
             std::cout << "-";
         }

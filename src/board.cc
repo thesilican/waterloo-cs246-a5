@@ -12,9 +12,9 @@ Board::Board()
 }
 
 Board::Board(std::unique_ptr<Piece> pieces[8][8], Player to_move,
-             bool can_castle[4], Point en_passent_square, int half_move,
+             bool can_castle[4], Point en_passant_square, int half_move,
              int full_move)
-    : to_move(to_move), en_passent_square(en_passent_square),
+    : to_move(to_move), en_passant_square(en_passant_square),
       half_move(half_move), full_move(full_move) {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -102,7 +102,7 @@ std::vector<Move> Board::legal_moves() {
 
 bool Board::is_check() {
     Board board = this->clone();
-    board.en_passent_square = Point(-1, -1);
+    board.en_passant_square = Point(-1, -1);
     board.to_move = to_move == Player::White ? Player::Black : Player::White;
     std::vector<Move> child_moves = board.possible_moves();
     for (auto cmove : child_moves) {
@@ -141,8 +141,8 @@ void Board::make_move(Move m) {
         get(m.to) = new_piece(m.promotes_to, player);
     }
 
-    // Handle en passent capture
-    if (piece == PieceType::Pawn && m.to == en_passent_square) {
+    // Handle en passant capture
+    if (piece == PieceType::Pawn && m.to == en_passant_square) {
         get(Point(m.to.x, m.from.y)) = nullptr;
     }
 
@@ -159,7 +159,7 @@ void Board::make_move(Move m) {
         }
     }
 
-    // Update en passent square
+    // Update en passant square
     if (piece == PieceType::Pawn &&
         ((white && m.from.y == 1 && m.to.y == 3) ||
          (!white && m.from.y == 6 && m.to.y == 4))) {
@@ -168,12 +168,12 @@ void Board::make_move(Move m) {
         Point r = ep + Point(-1, 0);
         if ((l.in_bounds() && get(l) != nullptr && get(l)->player != to_move) ||
             (r.in_bounds() && get(r) != nullptr && get(r)->player != to_move)) {
-            en_passent_square = ep + (white ? Point(0, -1) : Point(0, 1));
+            en_passant_square = ep + (white ? Point(0, -1) : Point(0, 1));
         } else {
-            en_passent_square = Point(-1, -1);
+            en_passant_square = Point(-1, -1);
         }
     } else {
-        en_passent_square = Point(-1, -1);
+        en_passant_square = Point(-1, -1);
     }
 
     // Update can castle
@@ -227,7 +227,7 @@ void Board::make_move(Move m) {
 }
 
 Board Board::clone() {
-    return Board(pieces, to_move, can_castle, en_passent_square, half_move,
+    return Board(pieces, to_move, can_castle, en_passant_square, half_move,
                  full_move);
 }
 
@@ -281,8 +281,8 @@ std::string Board::fen() {
 
     s << ' ';
 
-    if (en_passent_square.in_bounds()) {
-        s << en_passent_square.algebraic();
+    if (en_passant_square.in_bounds()) {
+        s << en_passant_square.algebraic();
     } else {
         s << '-';
     }
@@ -333,7 +333,7 @@ Board::Board(std::string fen) {
     std::string board_str = *(fen_iter++);
     std::string to_move_str = *(fen_iter++);
     std::string can_castle_str = *(fen_iter++);
-    std::string en_passent_str = *(fen_iter++);
+    std::string en_passant_str = *(fen_iter++);
     std::string half_move_str = *(fen_iter++);
     std::string full_move_str = *(fen_iter);
 
@@ -376,10 +376,10 @@ Board::Board(std::string fen) {
         can_castle[3] = can_castle_str.find("q") != std::string::npos;
     }
 
-    if (en_passent_str == "-") {
-        en_passent_square = Point(-1, -1);
+    if (en_passant_str == "-") {
+        en_passant_square = Point(-1, -1);
     } else {
-        en_passent_square = Point(en_passent_str);
+        en_passant_square = Point(en_passant_str);
     }
 
     half_move = std::stoi(half_move_str);

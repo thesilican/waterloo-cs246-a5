@@ -4,7 +4,7 @@
 Setup::Setup() : board() {}
 
 void Setup::remove_rights() {
-    board.en_passent_square = Point(-1,-1);
+    board.en_passant_square = Point(-1,-1);
     board.can_castle[0] = false;
     board.can_castle[1] = false;
     board.can_castle[2] = false;

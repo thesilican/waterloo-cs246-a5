@@ -30,13 +30,13 @@ class Eval {
 class ChuckNorrisBot {
 - board: char[8][8]
 - castling: bool[4]
-- en_passent_good: bool[4]
+- en_passant_good: bool[4]
 + black_turn: bool
 + best_move(Game &game): Move
 + alpha_beta(int alpha, int beta, int depth): Eval
 + to_board(): Board
 + move(int move)
-+ undo_move(int move, bool is_enpassent, char captured)
++ undo_move(int move, bool is_enpassant, char captured)
 + uncompress_move(int m): Move
 + compress_move(Move m): int
 + legal_moves(vector<int> &final_moves)
@@ -51,7 +51,7 @@ ChuckNorrisBot <|-u- Bot
 class Board {
 + to_move: Player
 + can_castle: bool[4]
-+ en_passent_square: Point
++ en_passant_square: Point
 + half_move: int
 + full_move: int
 - possible_moves(): vector<Move>

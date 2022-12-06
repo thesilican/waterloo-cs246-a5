@@ -97,7 +97,7 @@ Move::Move(std::string san, Board &board) {
                        (dis_file == -1 || dis_file == m.from.x) &&
                        (dis_rank == -1 || dis_rank == m.from.y) &&
                        (!capture || m.captured(board) != nullptr ||
-                        board.en_passent_square == m.to) &&
+                        board.en_passant_square == m.to) &&
                        has_promote == m.has_promotes_to &&
                        (!m.has_promotes_to || m.promotes_to == promote);
         if (matches) {

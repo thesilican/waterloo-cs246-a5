@@ -54,7 +54,7 @@ ChuckNorrisBot::ChuckNorrisBot(Board &b) : ChuckNorrisBot() {
     for (int i = 0; i < 8; i++) {
         en_passant_good[i] = false;
     }
-    Point ep = b.en_passent_square;
+    Point ep = b.en_passant_square;
     if (ep.in_bounds()) {
         en_passant_good[ep.x] = true;
     }
