@@ -1,5 +1,5 @@
 #ifndef GRAPHICSUI_H
-#define GRAPHICSUI_h
+#define GRAPHICSUI_H
 #include "controller.h"
 #include "observer.h"
 #include "window.h"
