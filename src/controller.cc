@@ -159,6 +159,8 @@ void Controller::run_game() {
             if (found) {
                 game.make_move(move);
                 success = true;
+            } else {
+                std::cout << "Illegal move" << std::endl;
             }
         } else if (enable_bonus &&
                    std::regex_match(line, result, move_san_regex)) {
@@ -186,8 +188,9 @@ void Controller::run_game() {
             if (found) {
                 game.make_move(move);
                 success = true;
+            }else {
+                std::cout << "Illegal move" << std::endl;
             }
-
         } else if (line == "move" || (enable_bonus && line == "")) {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
