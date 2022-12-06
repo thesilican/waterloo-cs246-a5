@@ -45,6 +45,11 @@ void Controller::run_game() {
         static std::regex move_regex =
             std::regex("^move\\s+([a-h][1-8])\\s*([a-h][1-8])\\s*([nbrq]|)");
         if (std::regex_match(line, result, move_regex)) {
+            std::unique_ptr<Bot> &bot =
+                game.board.to_move == Player::White ? white_bot : black_bot;
+            if (bot != nullptr) {
+                std::cout << "Expected bot move" << std::endl;
+            }
             auto iter = ++result.begin();
             std::string from_str = *(iter++);
             std::string to_str = *(iter++);
@@ -66,7 +71,7 @@ void Controller::run_game() {
             std::unique_ptr<Bot> &bot =
                 game.board.to_move == Player::White ? white_bot : black_bot;
             if (bot == nullptr) {
-                std::cout << "Expected human move." << std::endl;
+                std::cout << "Expected human move" << std::endl;
             }
             Move move = bot->best_move(game);
             // Sanity check
