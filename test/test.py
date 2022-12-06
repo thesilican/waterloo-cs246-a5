@@ -9,7 +9,9 @@ import re
 
 def moves_equiv(uci1, uci2, bot):
     if bot:
-        promo_filter = lambda x: not (x.endswith("n") or x.endswith("b") or x.endswith("r"))
+        promo_filter = lambda x: not (
+            x.endswith("n") or x.endswith("b") or x.endswith("r")
+        )
         return sorted(filter(promo_filter, uci1)) == sorted(filter(promo_filter, uci2))
     else:
         return sorted(uci1) == sorted(uci2)
@@ -23,6 +25,17 @@ def fen_equiv(fen1, fen2, bot):
         return m1 and m2 and m1.group(1) == m2.group(1)
     else:
         return fen1 == fen2
+
+
+def checks_state(board):
+    if board.is_checkmate():
+        return "checkmate"
+    elif board.is_stalemate():
+        return "stalemate"
+    elif board.is_check():
+        return "check"
+    else:
+        return "none"
 
 
 def program_gen_moves(fen, bot):
@@ -39,37 +52,65 @@ def program_apply_move(fen, uci, bot):
     return output.stdout.decode("utf8").strip()
 
 
+def program_checks_state(fen, bot):
+    cmd = "checks-state-bot" if bot else "checks-state"
+    output = subprocess.run(["bin/chess", "--test", cmd, fen], stdout=subprocess.PIPE)
+    return output.stdout.decode("utf8").strip()
+
+
 def test_fen(name, fen, bot):
     board = Board(fen)
+    fail = False
 
     # Test that the program generates the correct legal moves
     # given a board
-    output_moves = sorted(program_gen_moves(fen, bot))
-    expected_moves = sorted([x.uci() for x in board.generate_legal_moves()])
-    if not moves_equiv(output_moves, expected_moves, bot):
+    moves_output = sorted(program_gen_moves(fen, bot))
+    moves_expected = sorted([x.uci() for x in board.generate_legal_moves()])
+    if not moves_equiv(moves_output, moves_expected, bot):
+        fail = True
         print(colored(f"Failed: {name}", "red"))
         print("Legal moves are different")
         print("Output:")
-        print(" ".join(output_moves))
+        print(" ".join(moves_output))
         print("Expected:")
-        print(" ".join(expected_moves))
+        print(" ".join(moves_expected))
         return
+
+    # Check if checks are the same in parent board
+    checks_output = program_checks_state(fen, bot)
+    checks_expected = checks_state(board)
+    if checks_output != checks_expected:
+        fail = True
+        print(colored(f"Failed: {name}", "red"))
+        print(f"Incorrect checks state")
+        print(f"Output: {checks_output}")
+        print(f"Expected: {checks_expected}")
 
     # Test that the program correctly generates the proper child board
     # after applying a move to the board
-    fail = False
-    for move in output_moves:
-        output_board = program_apply_move(fen, move, bot)
+    for move in moves_output:
+        board_output = program_apply_move(fen, move, bot)
         board.push(Move.from_uci(move))
-        expected_board = board.fen()
-        if not fen_equiv(output_board, expected_board, bot):
+        board_expected = board.fen()
+        if not fen_equiv(board_output, board_expected, bot):
+            fail = True
             print(colored(f"Failed: {name}", "red"))
             print(f"Incorrect board output after applying {move}")
             print("Output:")
-            print(output_board)
+            print(board_output)
             print("Expected:")
-            print(expected_board)
+            print(board_expected)
+
+        # Check if checks are the same in parent board
+        checks_output = program_checks_state(board_expected, bot)
+        checks_expected = checks_state(board)
+        if checks_output != checks_expected:
             fail = True
+            print(colored(f"Failed: {name}", "red"))
+            print(f"Incorrect checks state")
+            print(f"Output: {checks_output}")
+            print(f"Expected: {checks_expected}")
+
         board.pop()
     if not fail:
         print(colored(f"Passed: {name}", "green"))

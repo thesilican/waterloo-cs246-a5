@@ -17,4 +17,8 @@ void test_gen_moves_bot(std::string fen);
 // Test function for making a move on a board (bot version)
 void test_apply_move_bot(std::string fen, std::string uci);
 
+// Test function for getting the checks state of a board
+// i.e. none, check, checkmate, or stalemate
+void test_checks_state(std::string fen);
+
 #endif
