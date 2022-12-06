@@ -42,8 +42,3 @@ bool operator==(Point a, Point b) {
 bool operator!=(Point a, Point b) {
     return !(a == b);
 }
-
-std::ostream &operator<<(std::ostream &o, Point p) {
-    o << p.algebraic();
-    return o;
-}

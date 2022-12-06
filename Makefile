@@ -9,6 +9,11 @@ LINKFLAGS := -lX11 -L /opt/homebrew/lib
 else
 LINKFLAGS := -lX11
 endif
+ifeq ($(shell uname), Darwin)
+FASTFLAGS := -std=c++14 -O3 -Wall -lX11 -I /opt/homebrew/include -L /opt/homebrew/lib
+else
+FASTFLAGS := -std=c++14 -O3 -Wall -lX11
+endif
 
 BIN_PATH := bin
 OBJ_PATH := obj
@@ -16,6 +21,7 @@ SRC_PATH := src
 
 TARGET_NAME := chess
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
+TARGET_FAST := $(BIN_PATH)/$(TARGET_NAME)fast
 
 SRC := $(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*,.cc)))
 HEAD := $(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*,.h)))
@@ -24,17 +30,24 @@ OBJ := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 .PHONY: all
 all: $(TARGET)
 
+.PHONY: fast
+fast: $(TARGET_FAST)
+
 .PHONY: run
 run: all
 	./$(TARGET)
 
 .PHONY: clean
 clean:
-	rm -rf $(TARGET) $(BIN_PATH) $(OBJ_PATH)
+	rm -rf $(BIN_PATH) $(OBJ_PATH)
 
 $(TARGET): $(OBJ)
 	mkdir -p $(BIN_PATH)
 	$(CXX) $(OBJ) $(LINKFLAGS) -o $(TARGET)
+
+$(TARGET_FAST): $(SRC) $(HEAD)
+	mkdir -p $(BIN_PATH)
+	$(CXX) $(SRC) $(FASTFLAGS) -o $(TARGET_FAST)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc $(HEAD)
 	mkdir -p $(OBJ_PATH)

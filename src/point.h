@@ -26,6 +26,5 @@ Point operator+(Point a, Point b);
 Point operator-(Point a, Point b);
 bool operator==(Point a, Point b);
 bool operator!=(Point a, Point b);
-std::ostream &operator<<(std::ostream &o, Point p);
 
 #endif
