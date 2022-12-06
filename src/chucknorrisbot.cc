@@ -827,6 +827,6 @@ bool ChuckNorrisBot::is_stalemate() {
 Move ChuckNorrisBot::best_move(Game &game) {
     *this = ChuckNorrisBot(game.board);
     std::vector<int> moves;
-    auto res = alpha_beta(-100000, 100000, 4);
+    auto res = alpha_beta(-100000, 100000, 3);
     return uncompress_move(res.move);
 }
