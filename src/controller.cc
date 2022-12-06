@@ -188,7 +188,7 @@ void Controller::run_game() {
             if (found) {
                 game.make_move(move);
                 success = true;
-            }else {
+            } else {
                 std::cout << "Illegal move" << std::endl;
             }
         } else if (line == "move" || (enable_bonus && line == "")) {
@@ -276,14 +276,14 @@ void Controller::command_loop() {
             black_bot = bot_from_string(*(iter++));
             std::cout << "Starting Game" << std::endl;
             run_game();
-            std::cout << "Score:\nWhite: " << white_wins + (draws / 2)
-                      << "\nBlack: " << black_wins + (draws / 2) << std::endl;
+            std::cout << "Score:\nWhite: " << white_wins + (draws / 2.0)
+                      << "\nBlack: " << black_wins + (draws / 2.0) << std::endl;
         } else if (line == "q" || line == "quit") {
             break;
         } else {
             std::cout << "Invalid command" << std::endl;
         }
     }
-    std::cout << "\n\nFinal Score:\nWhite: " << white_wins + (draws / 2)
-              << "\nBlack: " << black_wins + (draws / 2) << std::endl;
+    std::cout << "\n\nFinal Score:\nWhite: " << white_wins + (draws / 2.0)
+              << "\nBlack: " << black_wins + (draws / 2.0) << std::endl;
 }
