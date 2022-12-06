@@ -24,6 +24,10 @@ void Setup::clear_pieces() {
     }
 }
 
+void Setup::reset_board() {
+    board = Board();
+}
+
 void Setup::set_fen(std::string fen) {
     board = Board(fen);
 }

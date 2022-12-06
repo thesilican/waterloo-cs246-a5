@@ -24,6 +24,8 @@ class Setup {
     void remove_piece(Point point);
     // Remove all pieces from the board
     void clear_pieces();
+    // Resets the board to the default board state
+    void reset_board();
     // Set the board based on a fen string
     void set_fen(std::string fen);
     // Returns a game with the setup board state
