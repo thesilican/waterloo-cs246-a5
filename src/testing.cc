@@ -1,12 +1,12 @@
 #include "testing.h"
 #include "game.h"
-#include "testbot.h"
+#include "chucknorrisbot.h"
 #include <iostream>
 #include <string>
 
 void test_run() {
     Board b("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1");
-    TestBot tb(b);
+    ChuckNorrisBot tb(b);
     std::vector<int> moves;
     tb.legal_moves(moves);
     for (auto m : moves) {
@@ -32,7 +32,7 @@ void test_apply_move(std::string fen, std::string uci) {
 void test_gen_moves_bot(std::string fen) {
     Board board(fen);
     // print legal moves (one on each line)
-    TestBot tb(board);
+    ChuckNorrisBot tb(board);
     std::vector<int> moves;
     tb.legal_moves(moves);
     for (auto m : moves) {
@@ -44,7 +44,7 @@ void test_gen_moves_bot(std::string fen) {
 void test_apply_move_bot(std::string fen, std::string uci) {
     Board board(fen);
     Move move(uci);
-    TestBot tb(board);
+    ChuckNorrisBot tb(board);
     int m = tb.compress_move(move);
     tb.move(m);
     Board new_board = tb.to_board();
@@ -66,7 +66,7 @@ void test_checks_state(std::string fen) {
 
 void test_checks_state_bot(std::string fen) {
     Board board(fen);
-    TestBot tb(board);
+    ChuckNorrisBot tb(board);
     if (tb.is_checkmate()) {
         std::cout << "checkmate" << std::endl;
     } else if (tb.is_stalemate()) {

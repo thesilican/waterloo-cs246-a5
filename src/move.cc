@@ -29,9 +29,9 @@ Move::Move(std::string uci) {
 }
 
 Move::Move(std::string san, Board &board) {
-    static std::regex san_regex =
-        std::regex("^([0oO]-[0oO](?:-[0oO])?)|([nbrqkNBRQK]?)([a-h]?)([1-8]?)(x?)("
-                   "[a-h][1-8])(?:=?([nbrqNBRQ]))?$");
+    static std::regex san_regex = std::regex(
+        "^([0oO]-[0oO](?:-[0oO])?)|([nbrqkNBRQK]?)([a-h]?)([1-8]?)(x?)("
+        "[a-h][1-8])(?:=?([nbrqNBRQ]))?$");
     std::smatch result;
     if (!std::regex_match(san, result, san_regex)) {
         throw std::runtime_error("invalid san: " + san);
@@ -96,7 +96,8 @@ Move::Move(std::string san, Board &board) {
                        m.piece(board)->piece_type() == piece && m.to == to &&
                        (dis_file == -1 || dis_file == m.from.x) &&
                        (dis_rank == -1 || dis_rank == m.from.y) &&
-                       (!capture || m.captured(board) != nullptr) &&
+                       (!capture || m.captured(board) != nullptr ||
+                        board.en_passent_square == m.to) &&
                        has_promote == m.has_promotes_to &&
                        (!m.has_promotes_to || m.promotes_to == promote);
         if (matches) {

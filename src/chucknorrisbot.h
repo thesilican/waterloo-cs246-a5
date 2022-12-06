@@ -6,6 +6,9 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include "ai.h"
+
+class Bot;
 
 /*
   Goals:
@@ -29,7 +32,7 @@ struct Eval {
     int ev;
 };
 
-class TestBot {
+class ChuckNorrisBot : public Bot {
     // move representation: from.x (3 bits), from.y (3
     // bits), to.x (3 bits), to.y (3 bits), promote piece (4 bits) all in a
     // 16-bit int, promote piece '*' if n/a
@@ -72,8 +75,8 @@ class TestBot {
   public:
     bool black_turn = false;
 
-    TestBot();
-    TestBot(Board &b);
+    ChuckNorrisBot();
+    ChuckNorrisBot(Board &b);
 
     Eval alpha_beta(int alpha, int beta, int depth);
     Board to_board();
@@ -87,6 +90,8 @@ class TestBot {
     bool is_check(bool black);
     bool is_checkmate();
     bool is_stalemate();
+
+    Move best_move(Game &game) override;
 };
 
 #endif

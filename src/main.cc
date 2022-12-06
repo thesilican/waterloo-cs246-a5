@@ -2,7 +2,7 @@
 #include "assets.h"
 #include "controller.h"
 #include "graphicsui.h"
-#include "testbot.h"
+#include "chucknorrisbot.h"
 #include "testing.h"
 #include "textui.h"
 #include <iostream>

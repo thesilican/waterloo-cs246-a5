@@ -143,8 +143,7 @@ void Board::make_move(Move m) {
 
     // Handle en passent capture
     if (piece == PieceType::Pawn && m.to == en_passent_square) {
-        Point behind = white ? Point(0, -1) : Point(0, 1);
-        get(m.to + behind) = nullptr;
+        get(Point(m.to.x, m.from.y)) = nullptr;
     }
 
     // Handle castling
@@ -169,7 +168,7 @@ void Board::make_move(Move m) {
         Point r = ep + Point(-1, 0);
         if ((l.in_bounds() && get(l) != nullptr && get(l)->player != to_move) ||
             (r.in_bounds() && get(r) != nullptr && get(r)->player != to_move)) {
-            en_passent_square = ep;
+            en_passent_square = ep + (white ? Point(0, -1) : Point(0, 1));
         } else {
             en_passent_square = Point(-1, -1);
         }

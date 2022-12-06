@@ -29,9 +29,13 @@ OBJ := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
 .PHONY: default
 default: $(TARGET)
+	cp $(TARGET) $(TARGET_NAME)
 
-.PHONY: fast
-fast: $(TARGET_FAST)
+.PHONY: build
+build: $(TARGET)
+
+.PHONY: build-fast
+build-fast: $(TARGET_FAST)
 
 .PHONY: run
 run: $(TARGET)
@@ -43,7 +47,7 @@ run-fast: $(TARGET_FAST)
 
 .PHONY: clean
 clean:
-	rm -rf $(BIN_PATH) $(OBJ_PATH)
+	rm -rf $(BIN_PATH) $(OBJ_PATH) $(TARGET_NAME)
 
 $(TARGET): $(OBJ)
 	mkdir -p $(BIN_PATH)

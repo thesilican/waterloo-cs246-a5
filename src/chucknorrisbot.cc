@@ -1,11 +1,11 @@
-#include "testbot.h"
+#include "chucknorrisbot.h"
 #include <cctype>
 #include <iostream>
 #include <iterator>
 #include <memory>
 #include <vector>
 
-TestBot::TestBot() {
+ChuckNorrisBot::ChuckNorrisBot() {
     int_form['P'] = 0;
     int_form['N'] = 1;
     int_form['B'] = 2;
@@ -35,7 +35,7 @@ TestBot::TestBot() {
     char_form[12] = '*';
 }
 
-TestBot::TestBot(Board &b) : TestBot() {
+ChuckNorrisBot::ChuckNorrisBot(Board &b) : ChuckNorrisBot() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             Point p{i, j};
@@ -65,7 +65,7 @@ TestBot::TestBot(Board &b) : TestBot() {
     }
 }
 
-Board TestBot::to_board() {
+Board ChuckNorrisBot::to_board() {
     std::unique_ptr<Piece> pieces[8][8];
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -93,7 +93,7 @@ Board TestBot::to_board() {
     return Board{pieces, to_move, new_castle, ep, 0, 1};
 }
 
-Move TestBot::uncompress_move(int m) {
+Move ChuckNorrisBot::uncompress_move(int m) {
     Point from = get_from(m);
     Point to = get_to(m);
     char p = get_promote(m);
@@ -104,7 +104,7 @@ Move TestBot::uncompress_move(int m) {
     return Move{from, to};
 }
 
-int TestBot::compress_move(Move m) {
+int ChuckNorrisBot::compress_move(Move m) {
     if (!m.has_promotes_to) {
         return get_move(m.from, m.to, '*');
     }
@@ -115,7 +115,7 @@ int TestBot::compress_move(Move m) {
     return get_move(m.from, m.to, p);
 }
 
-int TestBot::get_move(Point from, Point to, char promote) {
+int ChuckNorrisBot::get_move(Point from, Point to, char promote) {
     int pr = int_form[promote];
     int m = from.x << 13;
     m |= (from.y << 10);
@@ -125,18 +125,18 @@ int TestBot::get_move(Point from, Point to, char promote) {
     return m;
 }
 
-char TestBot::get_promote(int move) {
+char ChuckNorrisBot::get_promote(int move) {
     return char_form[move & ((1 << 4) - 1)];
 }
 
-Point TestBot::get_from(int move) {
+Point ChuckNorrisBot::get_from(int move) {
     move = (move >> 10);
     int y = (move & ((1 << 3) - 1));
     move = (move >> 3);
     return Point(move, y);
 }
 
-Point TestBot::get_to(int move) {
+Point ChuckNorrisBot::get_to(int move) {
     move = (move >> 4);
     int y = (move & ((1 << 3) - 1));
     move = ((move >> 3) & ((1 << 3) - 1));
@@ -144,7 +144,7 @@ Point TestBot::get_to(int move) {
 }
 
 // maybe need en passant and castling ints (bit manip)??
-void TestBot::move(int move) {
+void ChuckNorrisBot::move(int move) {
     black_turn = !black_turn;
     Point from = get_from(move);
     Point to = get_to(move);
@@ -235,7 +235,7 @@ void TestBot::move(int move) {
 //- use a board class and copy it
 
 // doesn't undo castling and enpassant info
-void TestBot::undo_move(int move, bool is_enpassant, char captured) {
+void ChuckNorrisBot::undo_move(int move, bool is_enpassant, char captured) {
     Point from = get_from(move);
     Point to = get_to(move);
     char pr = get_promote(move);
@@ -278,7 +278,7 @@ void TestBot::undo_move(int move, bool is_enpassant, char captured) {
 }
 
 // color is 'b' or 'w', returns whether piece at "at" is of that color
-bool TestBot::piece_color(Point at, char color) {
+bool ChuckNorrisBot::piece_color(Point at, char color) {
     if (color == 'b') {
         return ((int_form[board[at.x][at.y]] >= 6) &&
                 (int_form[board[at.x][at.y]] <= 11));
@@ -287,11 +287,11 @@ bool TestBot::piece_color(Point at, char color) {
     }
 }
 
-bool TestBot::empty_square(Point at) {
+bool ChuckNorrisBot::empty_square(Point at) {
     return (board[at.x][at.y] == '*');
 }
 
-void TestBot::moves_pawn(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_pawn(Point at, std::vector<int> &moves) {
     int promo, t, one_up, start, ep;
     char color, queen, knight;
     if (board[at.x][at.y] == 'P') {
@@ -359,7 +359,7 @@ void TestBot::moves_pawn(Point at, std::vector<int> &moves) {
     }
 }
 
-void TestBot::jumpers(Point at, std::vector<Point> &targets,
+void ChuckNorrisBot::jumpers(Point at, std::vector<Point> &targets,
                       std::vector<int> &moves) {
     char color;
     if (piece_color(at, 'w')) {
@@ -379,7 +379,7 @@ void TestBot::jumpers(Point at, std::vector<Point> &targets,
     }
 }
 
-void TestBot::riders(Point at, std::vector<Point> &directions,
+void ChuckNorrisBot::riders(Point at, std::vector<Point> &directions,
                      std::vector<int> &moves) {
     char color;
     if (piece_color(at, 'w')) {
@@ -409,7 +409,7 @@ void TestBot::riders(Point at, std::vector<Point> &directions,
 
 // need new function for castle_moves that comes prechecked to ensure king isn't
 // under check due to move
-void TestBot::moves_king(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_king(Point at, std::vector<int> &moves) {
     std::vector<Point> targets = {Point(1, 1),  Point(0, 1),   Point(-1, 1),
                                   Point(-1, 0), Point(-1, -1), Point(0, -1),
                                   Point(1, -1), Point(1, 0)};
@@ -417,7 +417,7 @@ void TestBot::moves_king(Point at, std::vector<int> &moves) {
 }
 
 // returns legal castling moves for king at "at"
-void TestBot::moves_castle(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_castle(Point at, std::vector<int> &moves) {
     int arr_index, row;
     bool black;
     if (board[at.x][at.y] == 'K') {
@@ -489,34 +489,34 @@ void TestBot::moves_castle(Point at, std::vector<int> &moves) {
     }
 }
 
-void TestBot::moves_knight(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_knight(Point at, std::vector<int> &moves) {
     std::vector<Point> targets = {Point(2, 1),  Point(1, 2),   Point(-1, 2),
                                   Point(-2, 1), Point(-2, -1), Point(-1, -2),
                                   Point(1, -2), Point(2, -1)};
     jumpers(at, targets, moves);
 }
 
-void TestBot::moves_rook(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_rook(Point at, std::vector<int> &moves) {
     std::vector<Point> directions = {Point(1, 0), Point(0, 1), Point(0, -1),
                                      Point(-1, 0)};
     riders(at, directions, moves);
 }
 
-void TestBot::moves_bishop(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_bishop(Point at, std::vector<int> &moves) {
     std::vector<Point> directions = {Point(1, 1), Point(-1, 1), Point(-1, -1),
                                      Point(1, -1)};
     riders(at, directions, moves);
 }
 // get rid of std::move for copy elision
 
-void TestBot::moves_queen(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_queen(Point at, std::vector<int> &moves) {
     std::vector<Point> directions = {Point(1, 1),  Point(-1, 1), Point(-1, -1),
                                      Point(1, -1), Point(1, 0),  Point(0, 1),
                                      Point(0, -1), Point(-1, 0)};
     riders(at, directions, moves);
 }
 
-void TestBot::moves_general(Point at, std::vector<int> &moves) {
+void ChuckNorrisBot::moves_general(Point at, std::vector<int> &moves) {
     char piece = board[at.x][at.y];
     if (piece == 'P' || piece == 'p') {
         moves_pawn(at, moves);
@@ -542,7 +542,7 @@ void TestBot::moves_general(Point at, std::vector<int> &moves) {
 }
 
 // check if given color's king is under check
-bool TestBot::is_check(bool black) {
+bool ChuckNorrisBot::is_check(bool black) {
     char color;
     if (black) {
         color = 'w';
@@ -570,7 +570,7 @@ bool TestBot::is_check(bool black) {
 
 // maybe need to construct all moves vector in one go instead of combining
 // multiple vectors??
-void TestBot::all_moves(std::vector<int> &moves) {
+void ChuckNorrisBot::all_moves(std::vector<int> &moves) {
     char color;
     if (black_turn) {
         color = 'b';
@@ -588,7 +588,7 @@ void TestBot::all_moves(std::vector<int> &moves) {
     }
 }
 
-void TestBot::is_proper_move(int m, std::vector<int> &moves) {
+void ChuckNorrisBot::is_proper_move(int m, std::vector<int> &moves) {
     Point to = get_to(m);
     Point from = get_from(m);
     char captured = board[to.x][to.y];
@@ -620,7 +620,7 @@ void TestBot::is_proper_move(int m, std::vector<int> &moves) {
     undo_move(m, ep, captured);
 }
 
-void TestBot::legal_moves(std::vector<int> &final_moves) {
+void ChuckNorrisBot::legal_moves(std::vector<int> &final_moves) {
     char color;
     if (black_turn) {
         color = 'b';
@@ -646,7 +646,7 @@ void TestBot::legal_moves(std::vector<int> &final_moves) {
 }
 
 // maybe lower penalties for doubled and isolated pawns
-int TestBot::evaluate(int depth) {
+int ChuckNorrisBot::evaluate(int depth) {
     int turn;
     if (black_turn) {
         turn = -1;
@@ -756,7 +756,7 @@ int TestBot::evaluate(int depth) {
     return ev;
 }
 
-Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
+Eval ChuckNorrisBot::alpha_beta(int alpha, int beta, int depth) {
     if (depth == 0) {
         return Eval{0, evaluate(0)};
     }
@@ -812,7 +812,7 @@ Eval TestBot::alpha_beta(int alpha, int beta, int depth) {
     return Eval{best_move, alpha};
 }
 
-void TestBot::print_board_debug() {
+void ChuckNorrisBot::print_board_debug() {
     for (int i = 7; i >= 0; i--) {
         std::cout << i << " ";
         for (int j = 0; j < 8; j++) {
@@ -826,7 +826,7 @@ void TestBot::print_board_debug() {
     std::cout << '\n';
 }
 
-void TestBot::init_board_debug() {
+void ChuckNorrisBot::init_board_debug() {
     // board[0][0] = board[7][0] = 'R';
     // board[1][0] = board[6][0] = 'N';
     // board[2][0] = board[5][0] = 'B';
@@ -861,14 +861,21 @@ void TestBot::init_board_debug() {
     }
 }
 
-bool TestBot::is_checkmate() {
+bool ChuckNorrisBot::is_checkmate() {
     std::vector<int> moves;
     legal_moves(moves);
     return moves.size() == 0 && is_check(black_turn);
 }
 
-bool TestBot::is_stalemate() {
+bool ChuckNorrisBot::is_stalemate() {
     std::vector<int> moves;
     legal_moves(moves);
     return moves.size() == 0 && !is_check(black_turn);
+}
+
+Move ChuckNorrisBot::best_move(Game &game) {
+    *this = ChuckNorrisBot(game.board);
+    std::vector<int> moves;
+    auto res = alpha_beta(-100000, 100000, 3);
+    return uncompress_move(res.move);
 }
